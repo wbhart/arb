@@ -357,8 +357,6 @@ _fmpr_add_mpn(fmpr_t z,
 
     ret = _fmpr_set_round_mpn(&shift, fmpr_manref(z), tmp, zn, negative, prec, rnd);
 
-    printf("PREC = %ld, RET: %ld\n", prec, ret);
-
     fmpz_add_si_inline(fmpr_expref(z), xexp, shift);
 
 cleanup:
