@@ -259,7 +259,7 @@ int main()
                 break;
 
             default:
-                fmprb_mul(v, x, y, prec);
+                fmprb_mul(v, y, x, prec);
                 fmprb_mul(x, y, x, prec);
                 if (!fmprb_equal(x, v))
                 {

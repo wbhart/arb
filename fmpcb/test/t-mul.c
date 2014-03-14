@@ -122,7 +122,8 @@ int main()
         fmpcb_mul(c, a, a, prec);
         fmpcb_mul(d, a, b, prec);
 
-        if (!fmpcb_equal(c, d))
+        /* squaring may use a different method */
+        if (!fmpcb_overlaps(c, d))
         {
             printf("FAIL: aliasing a, a\n\n");
             printf("a = "); fmpcb_print(a); printf("\n\n");
@@ -155,7 +156,7 @@ int main()
         prec = 2 + n_randint(state, 200);
 
         fmpcb_set(b, a);
-        fmpcb_mul(c, a, b, prec);
+        fmpcb_mul(c, a, a, prec);
         fmpcb_mul(a, a, a, prec);
 
         if (!fmpcb_equal(a, c))

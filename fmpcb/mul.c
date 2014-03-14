@@ -113,13 +113,13 @@ fmpcb_mul(fmpcb_t z, const fmpcb_t x, const fmpcb_t y, long prec)
             fmprb_init(t);
             fmprb_init(u);
 
-            fmprb_mul(t, c, a, prec);
-            fmprb_mul(u, c, b, prec);
+            fmprb_mul(t, a, c, prec);
+            fmprb_mul(u, b, c, prec);
 
-            fmprb_mul(e, d, b, prec);
+            fmprb_mul(e, b, d, prec);
             fmprb_sub(e, t, e, prec);
 
-            fmprb_mul(f, d, a, prec);
+            fmprb_mul(f, a, d, prec);
             fmprb_add(f, u, f, prec);
 
             fmprb_clear(t);
