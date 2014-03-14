@@ -98,10 +98,10 @@ ufloat_mul(ufloat_t z, const ufloat_t x, const ufloat_t y)
 }
 
 #define UFLOAT_ADJUST_ONE_TOO_LARGE(m, e) \
-    if ((m) >> UFLOAT_BITS) \
     { \
-        (m) = ((m) >> 1) + 1; \
-        (e)++; \
+        mp_limb_t __t = (m) >> UFLOAT_BITS; \
+        (m) = ((m) >> __t) + __t; \
+        (e) += __t; \
     }
 
 #define UFLOAT_CHECK_BITS(rr) \
