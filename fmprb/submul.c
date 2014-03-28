@@ -26,7 +26,7 @@
 #include "fmprb.h"
 
 void
-fmprb_submul(fmprb_t z, const fmprb_t x, const fmprb_t y, long prec)
+fmprb_submul_naive(fmprb_t z, const fmprb_t x, const fmprb_t y, long prec)
 {
     fmprb_t t;
 

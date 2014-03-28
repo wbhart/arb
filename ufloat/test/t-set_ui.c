@@ -30,7 +30,7 @@ int main()
     long iter;
     flint_rand_t state;
 
-    printf("set_fmpr....");
+    printf("set_ui....");
     fflush(stdout);
 
     flint_randinit(state);
@@ -38,16 +38,18 @@ int main()
     for (iter = 0; iter < 100000; iter++)
     {
         fmpr_t x, y, z;
+        ulong v;
         ufloat_t u;
 
         fmpr_init(x);
         fmpr_init(y);
         fmpr_init(z);
 
-        fmpr_randtest_special(x, state, 2 + n_randint(state, 1000), 2 + n_randint(state, 100));
+        v = n_randtest(state);
+        fmpr_set_ui(x, v);
         fmpr_randtest_special(y, state, 2 + n_randint(state, 1000), 2 + n_randint(state, 100));
 
-        if (ufloat_set_fmpr(u, x))
+        if (ufloat_set_ui(u, v))
         {
             ufloat_get_fmpr(y, u);
             fmpr_mul_2exp_si(z, x, 1);

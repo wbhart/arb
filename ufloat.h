@@ -115,6 +115,8 @@ int ufloat_set_mpn_2exp_fmpz(ufloat_t rr, mp_srcptr xp, mp_size_t xn, const fmpz
 
 int ufloat_set_fmpr(ufloat_t rr, const fmpr_t x);
 
+int ufloat_set_ui(ufloat_t rr, ulong x);
+
 void ufloat_addmul(ufloat_t z, const ufloat_t x, const ufloat_t y);
 
 void ufloat_add_2exp(ufloat_t z, const ufloat_t x, long e);

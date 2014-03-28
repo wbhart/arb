@@ -25,44 +25,33 @@
 
 #include "ufloat.h"
 
-/* assumes xn >= 1, top limb of xp set */
 int
-ufloat_set_mpn_2exp_fmpz(ufloat_t rr, mp_srcptr xp,
-    mp_size_t xn, const fmpz_t exp)
+ufloat_set_ui(ufloat_t rr, ulong x)
 {
-    mp_limb_t m;
-    long e, bits, shift;
-
-    if (*exp < UFLOAT_MIN_EXP || *exp > UFLOAT_MAX_EXP)
-        return 0;
-
-    m = xp[xn - 1];
-
-    count_leading_zeros(bits, m);
-    bits = FLINT_BITS - bits;
-
-    e = *exp + (xn - 1) * FLINT_BITS + bits;
-    shift = bits - UFLOAT_BITS;
-
-    if (xn == 1)
+    if (x == 0)
     {
-        if (shift <= 0)
-            m = m << (-shift);
-        else
-            m = (m >> shift) + 1;
+        ufloat_zero(rr);
     }
-    else if (shift >= 0)
-        m = (m >> shift) + 1;
     else
-        m = ((m << (-shift)) | (xp[xn-2] >> (FLINT_BITS - (-shift)))) + 1;
+    {
+        long bits, e, shift;
+        mp_limb_t t = x;
 
-    UFLOAT_ADJUST_ONE_TOO_LARGE(m, e)
+        count_leading_zeros(bits, t);
+        bits = FLINT_BITS - bits;
+        e = bits;
+        shift = bits - UFLOAT_BITS;
 
-    if (e < UFLOAT_MIN_EXP || e > UFLOAT_MAX_EXP)
-        return 0;
+        if (shift <= 0)
+            t = t << (-shift);
+        else
+            t = (t >> shift) + 1;
 
-    rr->m = m;
-    rr->e = e;
+        UFLOAT_ADJUST_ONE_TOO_LARGE(t, e)
+
+        rr->m = t;
+        rr->e = e;
+    }
 
     return 1;
 }

@@ -45,8 +45,33 @@ ufloat_set_fmpr(ufloat_t rr, const fmpr_t x)
 
         if (!COEFF_IS_MPZ(v))
         {
+            long e, bits, shift;
+            fmpz exp = *fmpr_expref(x);
+
             t = FLINT_ABS(v);
-            return ufloat_set_mpn_2exp_fmpz(rr, &t, 1, fmpr_expref(x));
+
+            if (exp < UFLOAT_MIN_EXP || exp > UFLOAT_MAX_EXP)
+                return 0;
+
+            count_leading_zeros(bits, t);
+            bits = FLINT_BITS - bits;
+            e = exp + bits;
+            shift = bits - UFLOAT_BITS;
+
+            if (shift <= 0)
+                t = t << (-shift);
+            else
+                t = (t >> shift) + 1;
+
+            UFLOAT_ADJUST_ONE_TOO_LARGE(t, e)
+
+            if (e < UFLOAT_MIN_EXP || e > UFLOAT_MAX_EXP)
+                return 0;
+
+            rr->m = t;
+            rr->e = e;
+
+            return 1;
         }
         else
         {
