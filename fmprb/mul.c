@@ -72,31 +72,6 @@ fmprb_is_special(const fmprb_t x)
         (_exp) = __bc; \
     } while (0)
 
-static __inline__ void
-ufloat_add_r_get_error(fmpr_t rad, const fmpr_t mid, const ufloat_t err, long r)
-{
-    if (r == FMPR_RESULT_EXACT)
-    {
-        ufloat_get_fmpr(rad, err);
-    }
-    else
-    {
-        fmpz exp = *fmpr_expref(mid);
-
-        if (exp < UFLOAT_MIN_EXP || exp > UFLOAT_MAX_EXP)
-        {
-            ufloat_get_fmpr(rad, err);
-            fmpr_add_error_result(rad, rad, mid, r, FMPRB_RAD_PREC, FMPR_RND_UP);
-        }
-        else
-        {
-            ufloat_t err2;
-            ufloat_add_2exp(err2, err, exp - r);
-            ufloat_get_fmpr(rad, err2);
-        }
-    }
-}
-
 void
 fmprb_mul_fmpz(fmprb_t z, const fmprb_t x, const fmpz_t y, long prec)
 {

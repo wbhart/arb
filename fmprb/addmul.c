@@ -138,31 +138,6 @@ fmprb_is_special(const fmprb_t x)
     _cn = _an + _bn - (__cy == 0);                                          \
   } while (0);
 
-static __inline__ void
-ufloat_add_r_get_error(fmpr_t rad, const fmpr_t mid, const ufloat_t err, long r)
-{
-    if (r == FMPR_RESULT_EXACT)
-    {
-        ufloat_get_fmpr(rad, err);
-    }
-    else
-    {
-        fmpz exp = *fmpr_expref(mid);
-
-        if (exp < UFLOAT_MIN_EXP || exp > UFLOAT_MAX_EXP)
-        {
-            ufloat_get_fmpr(rad, err);
-            fmpr_add_error_result(rad, rad, mid, r, FMPRB_RAD_PREC, FMPR_RND_UP);
-        }
-        else
-        {
-            ufloat_t err2;
-            ufloat_add_2exp(err2, err, exp - r);
-            ufloat_get_fmpr(rad, err2);
-        }
-    }
-}
-
 extern TLS_PREFIX mp_ptr __mul_tmp;
 extern TLS_PREFIX long __mul_alloc;
 
@@ -225,9 +200,7 @@ fmprb_addmul(fmprb_t z, const fmprb_t x, const fmprb_t y, long prec)
         fmprb_mul(z, x, y, prec);
         return;
     }
-    else if (fmpr_is_special(fmprb_midref(x)) || fmpr_is_special(fmprb_radref(x))
-          || fmpr_is_special(fmprb_midref(y)) || fmpr_is_special(fmprb_radref(y))
-          || fmpr_is_special(fmprb_midref(z)) || fmpr_is_special(fmprb_radref(z)))
+    else if (fmprb_is_special(x) || fmprb_is_special(y) || fmprb_is_special(z))
     {
         fmprb_addmul_naive(z, x, y, prec);
         return;

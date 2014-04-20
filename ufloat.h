@@ -121,6 +121,31 @@ void ufloat_addmul(ufloat_t z, const ufloat_t x, const ufloat_t y);
 
 void ufloat_add_2exp(ufloat_t z, const ufloat_t x, long e);
 
+static __inline__ void
+ufloat_add_r_get_error(fmpr_t rad, const fmpr_t mid, const ufloat_t err, long r)
+{
+    if (r == FMPR_RESULT_EXACT)
+    {
+        ufloat_get_fmpr(rad, err);
+    }
+    else
+    {
+        fmpz exp = *fmpr_expref(mid);
+
+        if (exp < UFLOAT_MIN_EXP || exp > UFLOAT_MAX_EXP)
+        {
+            ufloat_get_fmpr(rad, err);
+            fmpr_add_error_result(rad, rad, mid, r, FMPRB_RAD_PREC, FMPR_RND_UP);
+        }
+        else
+        {
+            ufloat_t err2;
+            ufloat_add_2exp(err2, err, exp - r);
+            ufloat_get_fmpr(rad, err2);
+        }
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif
