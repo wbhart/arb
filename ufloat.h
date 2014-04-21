@@ -28,6 +28,7 @@
 
 #include "flint.h"
 #include "fmpr.h"
+#include "fmprb.h"
 
 #ifdef __cplusplus
 extern "C" {
