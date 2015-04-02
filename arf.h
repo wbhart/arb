@@ -35,6 +35,11 @@
 #define ARF_INLINE static __inline__
 #endif
 
+#include <stdlib.h>                
+#include <stdio.h>                 
+#include <string.h>                
+#include <math.h>                  
+#include <gmp.h>                   
 #include <math.h>
 #include "flint.h"
 #include "fmpr.h"
@@ -246,6 +251,27 @@ arf_clear(arf_t x)
 {
     fmpz_clear(ARF_EXPREF(x));
     ARF_DEMOTE(x);
+}
+
+ARF_INLINE arf_ptr
+_arf_vec_init(long n)
+{
+    long i;
+    arf_ptr v = (arf_ptr) flint_malloc(sizeof(arf_struct) * n);
+
+    for (i = 0; i < n; i++)
+        arf_init(v + i);
+
+    return v;
+}
+
+ARF_INLINE void
+_arf_vec_clear(arf_ptr v, long n)
+{
+    long i;
+    for (i = 0; i < n; i++)
+        arf_clear(v + i);
+    flint_free(v);
 }
 
 ARF_INLINE void

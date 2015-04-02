@@ -486,6 +486,8 @@ void mag_randtest_special(mag_t x, flint_rand_t state, long expbits);
 
 void mag_randtest(mag_t x, flint_rand_t state, long expbits);
 
+char * mag_get_str(const mag_t x);
+
 void mag_print(const mag_t x);
 
 void mag_printd(const mag_t x, long d);
