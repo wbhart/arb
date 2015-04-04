@@ -663,8 +663,7 @@ int check_accuracy(acb_ptr vec, long len, long prec);
 
 acb_ptr poly_roots(const fmpz_poly_t poly,
     long initial_prec,
-    long target_prec,
-    long print_digits);
+    long target_prec);
 
 
 #ifdef __cplusplus
