@@ -48,7 +48,15 @@ typedef struct
 acb_poly_struct;
 
 typedef acb_poly_struct acb_poly_t[1];
+typedef acb_poly_struct * acb_poly_ptr;
 
+
+ACB_POLY_INLINE acb_poly_ptr
+_acb_poly_init()
+{
+    acb_poly_ptr v = (acb_poly_ptr) flint_malloc(sizeof(acb_poly_struct));
+    return v;
+}
 
 /* Memory management */
 
@@ -94,6 +102,10 @@ acb_poly_one(acb_poly_t poly)
     acb_one(poly->coeffs);
     _acb_poly_set_length(poly, 1);
 }
+
+long _acb_poly_degree(const acb_poly_t poly);
+
+long _acb_poly_length(const acb_poly_t poly);
 
 void acb_poly_set_coeff_si(acb_poly_t poly, long n, long x);
 
@@ -644,6 +656,16 @@ void acb_poly_erf_series(acb_poly_t g, const acb_poly_t h, long n, long prec);
 
 void _acb_poly_gamma_upper_series(acb_ptr g, const acb_t s, acb_srcptr h, long hlen, long n, long prec);
 void acb_poly_gamma_upper_series(acb_poly_t g, const acb_t s, const acb_poly_t h, long n, long prec);
+
+acb_ptr _acb_poly_arr_get(acb_ptr vec, long i);
+
+int check_accuracy(acb_ptr vec, long len, long prec);
+
+acb_ptr poly_roots(const fmpz_poly_t poly,
+    long initial_prec,
+    long target_prec,
+    long print_digits);
+
 
 #ifdef __cplusplus
 }

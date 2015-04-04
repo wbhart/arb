@@ -471,6 +471,10 @@ acb_mul_onei(acb_t z, const acb_t x)
     }
 }
 
+arb_ptr acb_get_real(acb_t x);
+
+arb_ptr acb_get_imag(acb_t x);
+
 void acb_mul(acb_t z, const acb_t x, const acb_t y, long prec);
 
 void acb_mul_naive(acb_t z, const acb_t x, const acb_t y, long prec);
