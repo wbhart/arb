@@ -32,7 +32,7 @@ int check_accuracy(acb_ptr vec, long len, long prec)
 acb_ptr
 poly_roots(const fmpz_poly_t poly,
     long initial_prec,
-    long target_prec)
+    long target_prec);
 {
     long i, prec, deg, isolated, maxiter;
     acb_poly_t cpoly;
