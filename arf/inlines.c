@@ -20,9 +20,33 @@
 /******************************************************************************
 
     Copyright (C) 2014 Fredrik Johansson
+    Copyright (C) 2015 Tommy Hofmann
 
 ******************************************************************************/
 
 #define ARF_INLINES_C
 #include "arf.h"
 
+arf_ptr arf_vec_init(long n)
+{
+    long i;
+    arf_ptr v = (arf_ptr) flint_malloc(sizeof(arf_struct) * n);
+
+    for (i = 0; i < n; i++)
+        arf_init(v + i);
+
+    return v;
+}
+
+void arf_vec_clear(arf_ptr v, long n)
+{
+    long i;
+    for (i = 0; i < n; i++)
+        arf_clear(v + i);
+    flint_free(v);
+}
+
+void _arf_mul(arf_t z, const arf_t x, const arf_t y, long prec, arf_rnd_t rnd)
+{
+    ((rnd == FMPR_RND_DOWN) ? arf_mul_rnd_down(z, x, y, prec) : arf_mul_rnd_any(z, x, y, prec, rnd));
+}

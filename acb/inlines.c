@@ -20,9 +20,29 @@
 /******************************************************************************
 
     Copyright (C) 2014 Fredrik Johansson
+    Copyright (C) 2015 Tommy Hofmann
 
 ******************************************************************************/
 
 #define ACB_INLINES_C
 #include "acb.h"
 
+arb_ptr acb_get_real(acb_t x)
+{
+  arb_ptr y;
+  y = &(x->real);
+  return y;
+}
+
+arb_ptr acb_get_imag(acb_t x)
+{
+  arb_ptr y;
+  y = &(x->imag);
+  return y;
+}
+
+acb_ptr _acb_poly_arr_get(acb_ptr vec, long i)
+{
+  acb_ptr a = vec+i;
+  return a;
+}

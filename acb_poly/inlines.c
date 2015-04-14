@@ -36,12 +36,6 @@ long _acb_poly_degree(const acb_poly_t poly)
     return poly->length - 1;
 }
 
-acb_ptr _acb_poly_arr_get(acb_ptr vec, long i)
-{
-  acb_ptr a = vec+i;
-  return a;
-}
-
 /* Following two functions are copied from the example */
 
 int check_accuracy(acb_ptr vec, long len, long prec)

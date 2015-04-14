@@ -1069,10 +1069,6 @@ void arb_atan_arf_bb(arb_t z, const arf_t x, long prec);
 
 /* for julia wrapper, since I cannot(?) call macros */
 
-mag_ptr arb_get_rad(arb_t x);
-
-arf_ptr arb_get_mid(arb_t x);
-
 #ifdef __cplusplus
 }
 #endif

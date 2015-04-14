@@ -657,15 +657,6 @@ void acb_poly_erf_series(acb_poly_t g, const acb_poly_t h, long n, long prec);
 void _acb_poly_gamma_upper_series(acb_ptr g, const acb_t s, acb_srcptr h, long hlen, long n, long prec);
 void acb_poly_gamma_upper_series(acb_poly_t g, const acb_t s, const acb_poly_t h, long n, long prec);
 
-acb_ptr _acb_poly_arr_get(acb_ptr vec, long i);
-
-int check_accuracy(acb_ptr vec, long len, long prec);
-
-acb_ptr poly_roots(const fmpz_poly_t poly,
-    long initial_prec,
-    long target_prec);
-
-
 #ifdef __cplusplus
 }
 #endif
