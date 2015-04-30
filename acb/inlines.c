@@ -41,8 +41,7 @@ arb_ptr acb_get_imag(acb_t x)
   return y;
 }
 
-acb_ptr _acb_poly_arr_get(acb_ptr vec, long i)
+void _acb_poly_arr_get(acb_t z, acb_ptr vec, long i)
 {
-  acb_ptr a = vec+i;
-  return a;
+  acb_set(z, vec+i);
 }
