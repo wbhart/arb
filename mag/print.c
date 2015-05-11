@@ -26,19 +26,6 @@
 #include "mag.h"
 #include "arf.h"
 
-char *
-mag_get_str(const mag_t x)
-{
-    char *str;
-    arf_t t;
-
-    arf_init(t);
-    arf_set_mag(t, x);
-    str = arf_get_str(t);
-    arf_clear(t);
-    return str;
-}
-
 void
 mag_print(const mag_t x)
 {
