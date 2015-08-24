@@ -52,19 +52,17 @@ int check_accuracy(acb_ptr vec, long len, long prec)
     return 1;
 }
 
-acb_ptr
-poly_roots(const fmpz_poly_t poly,
+void
+poly_roots(acb_ptr roots, const fmpz_poly_t poly,
     long initial_prec,
     long target_prec)
 {
     long i, prec, deg, isolated, maxiter;
     acb_poly_t cpoly;
-    acb_ptr roots;
 
     deg = poly->length - 1;
 
     acb_poly_init(cpoly);
-    roots = _acb_vec_init(deg);
 
     for (prec = initial_prec; ; prec *= 2)
     {
@@ -80,6 +78,5 @@ poly_roots(const fmpz_poly_t poly,
         }
     }
     acb_poly_clear(cpoly);
-    return roots;
 }
 

@@ -53,7 +53,14 @@ arb_mat_struct;
 
 typedef arb_mat_struct arb_mat_t[1];
 
-#define arb_mat_entry(mat,i,j) ((mat)->rows[i] + (j))
+/* #define arb_mat_entry(mat,i,j) ((mat)->rows[i] + (j))*/
+
+ARB_MAT_INLINE
+arb_ptr arb_mat_entry(const arb_mat_t mat, slong i, slong j)
+{
+   return (mat->rows)[i] + j;
+}
+
 #define arb_mat_nrows(mat) ((mat)->r)
 #define arb_mat_ncols(mat) ((mat)->c)
 
@@ -78,6 +85,8 @@ void arb_mat_set(arb_mat_t dest, const arb_mat_t src);
 
 void arb_mat_set_fmpz_mat(arb_mat_t dest, const fmpz_mat_t src);
 
+void arb_mat_set_round_fmpz_mat(arb_mat_t dest, const fmpz_mat_t src, long prec);
+
 void arb_mat_set_fmpq_mat(arb_mat_t dest, const fmpq_mat_t src, long prec);
 
 /* Random generation */
@@ -99,6 +108,10 @@ int arb_mat_contains(const arb_mat_t mat1, const arb_mat_t mat2);
 int arb_mat_contains_fmpq_mat(const arb_mat_t mat1, const fmpq_mat_t mat2);
 
 int arb_mat_contains_fmpz_mat(const arb_mat_t mat1, const fmpz_mat_t mat2);
+
+/* Transpose */
+
+void arb_mat_transpose(arb_mat_t B, const arb_mat_t A);
 
 /* Special matrices */
 
