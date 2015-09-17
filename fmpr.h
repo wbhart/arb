@@ -26,6 +26,12 @@
 #ifndef FMPR_H
 #define FMPR_H
 
+#ifdef FMPR_INLINES_C
+#define FMPR_INLINE
+#else
+#define FMPR_INLINE static __inline__
+#endif
+
 #include <stdio.h>
 #include <limits.h>
 #include <gmp.h>
@@ -90,14 +96,14 @@ typedef const fmpr_struct * fmpr_srcptr;
 #define fmpr_expref(x) (&(x)->exp)
 
 
-static __inline__ void
+FMPR_INLINE void
 fmpr_init(fmpr_t x)
 {
     fmpz_init(fmpr_manref(x));
     fmpz_init(fmpr_expref(x));
 }
 
-static __inline__ void
+FMPR_INLINE void
 fmpr_clear(fmpr_t x)
 {
     fmpz_clear(fmpr_manref(x));
