@@ -1090,8 +1090,6 @@ void _arb_atan_sum_bs_powtab(fmpz_t T, fmpz_t Q, mp_bitcnt_t * Qexp,
 
 void arb_atan_arf_bb(arb_t z, const arf_t x, long prec);
 
-/* for julia wrapper, since I cannot(?) call macros */
-
 #ifdef __cplusplus
 }
 #endif
