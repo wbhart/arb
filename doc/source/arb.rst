@@ -129,6 +129,8 @@ Assignment and rounding
 
 .. function:: void arb_set_ui(arb_t y, ulong x)
 
+.. function:: void arb_set_d(arb_t y, double x)
+
 .. function:: void arb_set_fmpz(arb_t y, const fmpz_t x)
 
     Sets *y* to the value of *x* without rounding.
@@ -281,20 +283,28 @@ Random number generation
 Radius and interval operations
 -------------------------------------------------------------------------------
 
+.. function:: void arb_get_mid_arb(arb_t m, const arb_t x)
+
+    Sets *m* to the midpoint of *x*.
+
+.. function:: void arb_get_rad_arb(arb_t r, const arb_t x)
+
+    Sets *m* to the radius of *x*.
+
 .. function:: void arb_add_error_arf(arb_t x, const arf_t err)
 
-    Adds *err*, which is assumed to be nonnegative, to the radius of *x*.
+.. function:: void arb_add_error_mag(arb_t x, const mag_t err)
+
+.. function:: void arb_add_error(arb_t x, const arb_t err)
+
+    Adds the absolute value of *err* to the radius of *x* (the operation
+    is done in-place).
 
 .. function:: void arb_add_error_2exp_si(arb_t x, long e)
 
 .. function:: void arb_add_error_2exp_fmpz(arb_t x, const fmpz_t e)
 
     Adds `2^e` to the radius of *x*.
-
-.. function:: void arb_add_error(arb_t x, const arb_t error)
-
-    Adds the supremum of *err*, which is assumed to be nonnegative, to the
-    radius of *x*.
 
 .. function:: void arb_union(arb_t z, const arb_t x, const arb_t y, long prec)
 
@@ -525,7 +535,7 @@ Arithmetic
 
     Sets *y* to the negation of *x*.
 
-.. function:: void arb_abs(arb_t x, const arb_t y)
+.. function:: void arb_abs(arb_t y, const arb_t x)
 
     Sets *y* to the absolute value of *x*. No attempt is made to improve the
     interval represented by *x* if it contains zero.
@@ -680,8 +690,23 @@ Powers and roots
 .. function:: void arb_root(arb_t z, const arb_t x, ulong k, long prec)
 
     Sets *z* to the *k*-th root of *x*, rounded to *prec* bits.
-    As currently implemented, this function is only fast for small *k*.
-    For large *k* it is better to use :func:`arb_pow_fmpq` or :func:`arb_pow`.
+    This function selects between different algorithms. For large *k*,
+    it evaluates `\exp(\log(x)/k)`. For small *k*, it uses :func:`arf_root`
+    at the midpoint and computes a propagated error bound as follows:
+    if input interval is `[m-r, m+r]` with `r \le m`, the error is largest at
+    `m-r` where it satisfies
+
+    .. math ::
+
+        m^{1/k} - (m-r)^{1/k} = m^{1/k} [1 - (1-r/m)^{1/k}]
+
+        = m^{1/k} [1 - \exp(\log(1-r/m)/k)]
+
+        \le m^{1/k} \min(1, -\log(1-r/m)/k)
+
+        = m^{1/k} \min(1, \log(1+r/(m-r))/k).
+
+    This is evaluated using :func:`mag_log1p`.
 
 .. function:: void arb_pow_fmpz_binexp(arb_t y, const arb_t b, const fmpz_t e, long prec)
 
@@ -757,6 +782,12 @@ Exponentials and logarithms
 .. function:: void arb_expm1(arb_t z, const arb_t x, long prec)
 
     Sets `z = \exp(x)-1`, computed accurately when `x \approx 0`.
+
+.. function:: void arb_exp_invexp(arb_t z, arb_t w, const arb_t x, long prec)
+
+    Sets `z = \exp(x)` and `w = \exp(-x)`. The second exponential is computed
+    from the first using a division, but propagated error bounds are
+    computed separately.
 
 Trigonometric functions
 -------------------------------------------------------------------------------
@@ -864,9 +895,10 @@ Hyperbolic functions
 .. function:: void arb_tanh(arb_t y, const arb_t x, long prec)
 
     Sets `y = \tanh(x) = \sinh(x) / \cosh(x)`, evaluated
-    via :func:`arb_expm1` as `\tanh(x) = (e^{2x} - 1) / (e^{2x} + 1)` if
-    the midpoint of `x` is negative and as
-    `\tanh(x) = (1 - e^{-2x}) / (1 + e^{-2x})` otherwise.
+    via :func:`arb_expm1` as `\tanh(x) = (e^{2x} - 1) / (e^{2x} + 1)`
+    if `|x|` is small, and as
+    `\tanh(\pm x) = 1 - 2 e^{\mp 2x} / (1 + e^{\mp 2x})`
+    if `|x|` is large.
 
 .. function:: void arb_coth(arb_t y, const arb_t x, long prec)
 
@@ -1140,6 +1172,23 @@ Bernoulli numbers
     enough and `n` large enough for the Euler product to converge
     rapidly (otherwise this function will effectively hang).
 
+.. function:: void arb_power_sum_vec(arb_ptr res, const arb_t a, const arb_t b, long len, long prec)
+
+    For *n* from 0 to *len* - 1, sets entry *n* in the output vector *res* to
+
+    .. math ::
+
+        S_n(a,b) = \frac{1}{n+1}\left(B_{n+1}(b) - B_{n+1}(a)\right)
+
+    where `B_n(x)` is a Bernoulli polynomial. If *a* and *b* are integers
+    and `b \ge a`, this is equivalent to
+
+    .. math ::
+
+        S_n(a,b) = \sum_{k=a}^{b-1} k^n.
+
+    The computation uses the generating function for Bernoulli polynomials.
+
 Polylogarithms
 -------------------------------------------------------------------------------
 
@@ -1179,6 +1228,23 @@ Other special functions
     Simultaneously evaluates `a = T_n(x), b = T_{n-1}(x)` or
     `a = U_n(x), b = U_{n-1}(x)`.
     Aliasing between *a*, *b* and *x* is not permitted.
+
+.. function:: void arb_bell_sum_bsplit(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, long prec)
+
+.. function:: void arb_bell_sum_taylor(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, long prec)
+
+    Helper functions for Bell numbers, evaluating the sum
+    `\sum_{k=a}^{b-1} k^n / k!`. If *mmag* is non-NULL, it may be used
+    to indicate that the target error tolerance should be
+    `2^{mmag - prec}`.
+
+.. function:: void arb_bell_fmpz(arb_t res, const fmpz_t n, long prec)
+
+.. function:: void arb_bell_ui(arb_t res, ulong n, long prec)
+
+    Sets *res* to the Bell number `B_n`. If the number is too large to
+    fit exactly in *prec* bits, a numerical approximation is computed
+    efficiently.
 
 Internals for computing elementary functions
 -------------------------------------------------------------------------------
@@ -1322,3 +1388,88 @@ Internals for computing elementary functions
     is applied repeatedly instead of integrating a differential
     equation for the arctangent, as this appears to be more efficient.
 
+Vector functions
+-------------------------------------------------------------------------------
+
+.. function:: void _arb_vec_zero(arb_ptr vec, long n)
+
+    Sets all entries in *vec* to zero.
+
+.. function:: int _arb_vec_is_zero(arb_srcptr vec, long len)
+
+    Returns nonzero iff all entries in *x* are zero.
+
+.. function:: int _arb_vec_is_finite(arb_srcptr x, long len)
+
+    Returns nonzero iff all entries in *x* certainly are finite.
+
+.. function:: void _arb_vec_set(arb_ptr res, arb_srcptr vec, long len)
+
+    Sets *res* to a copy of *vec*.
+
+.. function:: void _arb_vec_set_round(arb_ptr res, arb_srcptr vec, long len, long prec)
+
+    Sets *res* to a copy of *vec*, rounding each entry to *prec* bits.
+
+.. function:: void _arb_vec_swap(arb_ptr vec1, arb_ptr vec2, long len)
+
+    Swaps the entries of *vec1* and *vec2*.
+
+.. function:: void _arb_vec_neg(arb_ptr B, arb_srcptr A, long n)
+
+.. function:: void _arb_vec_sub(arb_ptr C, arb_srcptr A, arb_srcptr B, long n, long prec)
+
+.. function:: void _arb_vec_add(arb_ptr C, arb_srcptr A, arb_srcptr B, long n, long prec)
+
+.. function:: void _arb_vec_scalar_mul(arb_ptr res, arb_srcptr vec, long len, const arb_t c, long prec)
+
+.. function:: void _arb_vec_scalar_div(arb_ptr res, arb_srcptr vec, long len, const arb_t c, long prec)
+
+.. function:: void _arb_vec_scalar_mul_fmpz(arb_ptr res, arb_srcptr vec, long len, const fmpz_t c, long prec)
+
+.. function:: void _arb_vec_scalar_mul_2exp_si(arb_ptr res, arb_srcptr src, long len, long c)
+
+.. function:: void _arb_vec_scalar_addmul(arb_ptr res, arb_srcptr vec, long len, const arb_t c, long prec)
+
+   Performs the respective scalar operation elementwise.
+
+.. function:: void _arb_vec_dot(arb_t res, arb_srcptr vec1, arb_srcptr vec2, long len2, long prec)
+
+    Sets *res* to the dot product of *vec1* and *vec2*.
+
+.. function:: void _arb_vec_norm(arb_t res, arb_srcptr vec, long len, long prec)
+
+    Sets *res* to the dot product of *vec* with itself.
+
+.. function:: void _arb_vec_get_mag(mag_t bound, arb_srcptr vec, long len, long prec)
+
+    Sets *bound* to an upper bound for the entries in *vec*.
+
+.. function:: long _arb_vec_bits(arb_srcptr x, long len)
+
+    Returns the maximum of :func:`arb_bits` for all entries in *vec*.
+
+.. function:: void _arb_vec_set_powers(arb_ptr xs, const arb_t x, long len, long prec)
+
+    Sets *xs* to the powers `1, x, x^2, \ldots, x^{len-1}`.
+
+.. function:: void _arb_vec_add_error_arf_vec(arb_ptr res, arf_srcptr err, long len)
+
+.. function:: void _arb_vec_add_error_mag_vec(arb_ptr res, mag_srcptr err, long len)
+
+    Adds the magnitude of each entry in *err* to the radius of the
+    corresponding entry in *res*.
+
+.. function:: void _arb_vec_indeterminate(arb_ptr vec, long len)
+
+    Applies :func:`arb_indeterminate` elementwise.
+
+.. function:: void _arb_vec_trim(arb_ptr res, arb_srcptr vec, long len)
+
+    Applies :func:`arb_trim` elementwise.
+
+.. function:: int _arb_vec_get_unique_fmpz_vec(fmpz * res,  arb_srcptr vec, long len)
+
+    Calls :func:`arb_get_unique_fmpz` elementwise and returns nonzero if
+    all entries can be rounded uniquely to integers. If any entry in *vec*
+    cannot be rounded uniquely to an integer, returns zero.

@@ -190,11 +190,11 @@ void arb_set_round(arb_t z, const arb_t x, long prec);
 
 void arb_trim(arb_t y, const arb_t x);
 
-void arb_neg(arb_t x, const arb_t y);
+void arb_neg(arb_t y, const arb_t x);
 
 void arb_neg_round(arb_t x, const arb_t y, long prec);
 
-void arb_abs(arb_t x, const arb_t y);
+void arb_abs(arb_t y, const arb_t x);
 
 void _arb_digits_round_inplace(char * s, mp_bitcnt_t * shift, fmpz_t error, long n, arf_rnd_t rnd);
 
@@ -229,6 +229,13 @@ arb_set_ui(arb_t x, ulong y)
 }
 
 ARB_INLINE void
+arb_set_d(arb_t x, double y)
+{
+    arf_set_d(arb_midref(x), y);
+    mag_zero(arb_radref(x));
+}
+
+ARB_INLINE void
 arb_set_fmpz(arb_t x, const fmpz_t y)
 {
     arf_set_fmpz(arb_midref(x), y);
@@ -255,7 +262,8 @@ arb_is_one(const arb_t f)
 ARB_INLINE void
 arb_one(arb_t f)
 {
-    arb_set_ui(f, 1UL);
+    arf_one(arb_midref(f));
+    mag_zero(arb_radref(f));
 }
 
 void arb_print(const arb_t x);
@@ -375,6 +383,20 @@ arb_get_mag(mag_t z, const arb_t x)
 }
 
 ARB_INLINE void
+arb_get_mid_arb(arb_t z, const arb_t x)
+{
+    arf_set(arb_midref(z), arb_midref(x));
+    mag_zero(arb_radref(z));
+}
+
+ARB_INLINE void
+arb_get_rad_arb(arb_t z, const arb_t x)
+{
+    arf_set_mag(arb_midref(z), arb_radref(x));
+    mag_zero(arb_radref(z));
+}
+
+ARB_INLINE void
 arb_get_abs_ubound_arf(arf_t u, const arb_t x, long prec)
 {
     arf_t t;
@@ -440,7 +462,6 @@ void arb_add_error_2exp_fmpz(arb_t x, const fmpz_t err);
 
 void arb_add_error(arb_t x, const arb_t error);
 
-/* TODO: document */
 ARB_INLINE void
 arb_add_error_mag(arb_t x, const mag_t err)
 {
@@ -558,6 +579,7 @@ void arb_log_fmpz(arb_t z, const fmpz_t x, long prec);
 void arb_log1p(arb_t r, const arb_t z, long prec);
 void arb_exp(arb_t z, const arb_t x, long prec);
 void arb_expm1(arb_t z, const arb_t x, long prec);
+void arb_exp_invexp(arb_t z, arb_t w, const arb_t x, long prec);
 void arb_sin(arb_t s, const arb_t x, long prec);
 void arb_cos(arb_t c, const arb_t x, long prec);
 void arb_sin_cos(arb_t s, arb_t c, const arb_t x, long prec);
@@ -647,6 +669,11 @@ void arb_chebyshev_t_ui(arb_t a, ulong n, const arb_t x, long prec);
 void arb_chebyshev_t2_ui(arb_t a, arb_t b, ulong n, const arb_t x, long prec);
 void arb_chebyshev_u_ui(arb_t a, ulong n, const arb_t x, long prec);
 void arb_chebyshev_u2_ui(arb_t a, arb_t b, ulong n, const arb_t x, long prec);
+
+void arb_power_sum_vec(arb_ptr res, const arb_t a, const arb_t b, long len, long prec);
+void arb_bell_sum_taylor(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, long prec);
+void arb_bell_sum_bsplit(arb_t res, const fmpz_t n, const fmpz_t a, const fmpz_t b, const fmpz_t mmag, long prec);
+void arb_bell_fmpz(arb_t res, const fmpz_t n, long prec);
 
 #define ARB_DEF_CACHED_CONSTANT(name, comp_func) \
     TLS_PREFIX long name ## _cached_prec = 0; \
@@ -819,29 +846,25 @@ _arb_vec_norm(arb_t res, arb_srcptr vec, long len, long prec)
         arb_addmul(res, vec + i, vec + i, prec);
 }
 
-/* TODO: mag version? */
 ARB_INLINE void
-_arb_vec_get_abs_ubound_arf(arf_t bound, arb_srcptr vec,
-        long len, long prec)
+_arb_vec_get_mag(mag_t bound, arb_srcptr vec, long len)
 {
-    arf_t t;
-    long i;
-
     if (len < 1)
     {
-        arf_zero(bound);
+        mag_zero(bound);
     }
     else
     {
-        arb_get_abs_ubound_arf(bound, vec, prec);
-        arf_init(t);
+        mag_t t;
+        long i;
+        arb_get_mag(bound, vec);
+        mag_init(t);
         for (i = 1; i < len; i++)
         {
-            arb_get_abs_ubound_arf(t, vec + i, prec);
-            if (arf_cmp(t, bound) > 0)
-                arf_set(bound, t);
+            arb_get_mag(t, vec + i);
+            mag_max(bound, bound, t);
         }
-        arf_clear(t);
+        mag_clear(t);
     }
 }
 
@@ -1074,4 +1097,3 @@ void arb_atan_arf_bb(arb_t z, const arf_t x, long prec);
 #endif
 
 #endif
-

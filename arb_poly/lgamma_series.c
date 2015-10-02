@@ -61,6 +61,12 @@ _arb_poly_lgamma_series(arb_ptr res, arb_srcptr h, long hlen, long len, long pre
     arb_t zr;
     arb_ptr t, u;
 
+    if (!arb_is_positive(h))
+    {
+        _arb_vec_indeterminate(res, len);
+        return;
+    }
+
     hlen = FLINT_MIN(hlen, len);
     wp = prec + FLINT_BIT_COUNT(prec);
 
@@ -76,6 +82,7 @@ _arb_poly_lgamma_series(arb_ptr res, arb_srcptr h, long hlen, long len, long pre
         if (r <= 0)
         {
             _arb_vec_indeterminate(res, len);
+            goto cleanup;
         }
         else
         {
@@ -114,6 +121,7 @@ _arb_poly_lgamma_series(arb_ptr res, arb_srcptr h, long hlen, long len, long pre
     _arb_vec_set(t + 1, h + 1, hlen - 1);
     _arb_poly_compose_series(res, u, len, t, hlen, len, prec);
 
+cleanup:
     arb_clear(zr);
     _arb_vec_clear(t, len);
     _arb_vec_clear(u, len);

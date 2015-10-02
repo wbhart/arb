@@ -285,6 +285,12 @@ Powers and logarithms
 
     Sets *z* to an upper bound for `\sqrt{x^2 + y^2}`.
 
+.. function:: void mag_root(mag_t z, const mag_t x, ulong n)
+
+    Sets *z* to an upper bound for `x^{1/n}`. 
+    We evaluate `\exp(\log(1+2^{kn}x)/n) 2^{-k}`, where *k* is chosen
+    so that `2^{kn}x \approx 2^{30}`.
+
 .. function:: void mag_log1p(mag_t z, const mag_t x)
 
     Sets *z* to an upper bound for `\log(1+x)`. The bound is computed
@@ -310,6 +316,10 @@ Powers and logarithms
 .. function:: void mag_binpow_uiui(mag_t z, ulong m, ulong n)
 
     Sets *z* to an upper bound for `(1 + 1/m)^n`.
+
+.. function:: void mag_geom_series(mag_t res, const mag_t x, ulong N)
+
+    Sets *res* to an upper bound for `\sum_{k=N}^{\infty} x^k`.
 
 Special functions
 -------------------------------------------------------------------------------

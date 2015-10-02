@@ -23,57 +23,25 @@
 
 ******************************************************************************/
 
-#include "fmprb.h"
+#include "bernoulli.h"
 
-
-
-/* TODO: fix/optimize for n > prec */
 void
-fmprb_div_2expm1_ui(fmprb_t y, const fmprb_t x, ulong n, long prec)
+_bernoulli_fmpq_ui(fmpz_t num, fmpz_t den, ulong n)
 {
-    if (n < FLINT_BITS)
+    if (n < (ulong) bernoulli_cache_num)
     {
-        fmprb_div_ui(y, x, (1UL << n) - 1, prec);
-    }
-    else if (n < 1024 + prec / 32 || n > LONG_MAX / 2)
-    {
-        fmprb_t t;
-        fmprb_init(t);
-        fmprb_one(t);
-        fmpz_set_ui(fmpr_expref(fmprb_midref(t)), n);
-        fmprb_sub_ui(t, t, 1, prec);
-        fmprb_div(y, x, t, prec);
-        fmprb_clear(t);
+        fmpz_set(num, fmpq_numref(bernoulli_cache + n));
+        fmpz_set(den, fmpq_denref(bernoulli_cache + n));
     }
     else
     {
-        fmprb_t s, t;
-        long i, b;
-
-        fmprb_init(s);
-        fmprb_init(t);
-
-        /* x / (2^n - 1) = sum_{k>=1} x * 2^(-k*n)*/
-
-        fmprb_mul_2exp_si(s, x, -n);
-        fmprb_set(t, s);
-        b = 1;
-
-        for (i = 2; i <= prec / n + 1; i++)
-        {
-            fmprb_mul_2exp_si(t, t, -n);
-            fmprb_add(s, s, t, prec);
-            b = i;
-        }
-
-        /* error bound: sum_{k>b} x * 2^(-k*n) <= x * 2^(-b*n - (n-1)) */
-        fmprb_mul_2exp_si(t, x, -b*n - (n-1));
-        fmprb_abs(t, t);
-        fmprb_add_error(s, t);
-
-        fmprb_set(y, s);
-
-        fmprb_clear(s);
-        fmprb_clear(t);
+        _bernoulli_fmpq_ui_zeta(num, den, n);
     }
 }
+
+void
+bernoulli_fmpq_ui(fmpq_t b, ulong n)
+{
+    _bernoulli_fmpq_ui(fmpq_numref(b), fmpq_denref(b), n);
+}
+

@@ -33,6 +33,7 @@ The following people (among others) have contributed patches or bug reports.
 * Clemens Heuberger
 * Pascal Molin
 * Ricky Farr
+* Marcello Seri
 
 Software 
 -------------------------------------------------------------------------------
@@ -99,6 +100,8 @@ Bibliography
 .. [BZ2011] \R. P. Brent and P. Zimmermann, *Modern Computer Arithmetic*, Cambridge University Press (2011), http://www.loria.fr/~zimmerma/mca/pub226.html
 
 .. [CP2005] \R. Crandall and C. Pomerance, *Prime Numbers: A Computational Perspective*, second edition, Springer (2005).
+
+.. [EM2004] \O. Espinosa and V. Moll, "A generalized polygamma function", Integral Transforms and Special Functions (2004), 101-115.
 
 .. [Fil1992] \S. Fillebrown, "Faster Computation of Bernoulli Numbers", Journal of Algorithms 13 (1992) 431-445
 

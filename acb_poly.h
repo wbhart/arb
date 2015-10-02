@@ -469,6 +469,10 @@ long acb_poly_find_roots(acb_ptr roots,
     const acb_poly_t poly, acb_srcptr initial,
     long maxiter, long prec);
 
+void _acb_poly_root_bound_fujiwara(mag_t bound, acb_srcptr poly, long len);
+
+void acb_poly_root_bound_fujiwara(mag_t bound, acb_poly_t poly);
+
 /* Special functions */
 
 void _acb_poly_pow_ui_trunc_binexp(acb_ptr res,
@@ -546,6 +550,10 @@ void _acb_poly_cos_pi_series(acb_ptr g, acb_srcptr h, long hlen, long n, long pr
 
 void acb_poly_cos_pi_series(acb_poly_t g, const acb_poly_t h, long n, long prec);
 
+void _acb_poly_cot_pi_series(acb_ptr g, acb_srcptr h, long hlen, long len, long prec);
+
+void acb_poly_cot_pi_series(acb_poly_t res, const acb_poly_t f, long len, long prec);
+
 void _acb_poly_tan_series(acb_ptr g, acb_srcptr h, long hlen, long len, long prec);
 
 void acb_poly_tan_series(acb_poly_t g, const acb_poly_t h, long n, long prec);
@@ -561,6 +569,10 @@ void acb_poly_rgamma_series(acb_poly_t res, const acb_poly_t f, long n, long pre
 void _acb_poly_lgamma_series(acb_ptr res, acb_srcptr h, long hlen, long len, long prec);
 
 void acb_poly_lgamma_series(acb_poly_t res, const acb_poly_t f, long n, long prec);
+
+void _acb_poly_digamma_series(acb_ptr res, acb_srcptr h, long hlen, long len, long prec);
+
+void acb_poly_digamma_series(acb_poly_t res, const acb_poly_t f, long n, long prec);
 
 void _acb_poly_rising_ui_series(acb_ptr res, acb_srcptr f, long flen, ulong r, long trunc, long prec);
 
@@ -624,8 +636,8 @@ void _acb_poly_powsum_series_naive_threaded(acb_ptr z, const acb_t s, const acb_
 void _acb_poly_powsum_one_series_sieved(acb_ptr z, const acb_t s, long n, long len, long prec);
 
 void _acb_poly_zeta_em_sum(acb_ptr z, const acb_t s, const acb_t a, int deflate, ulong N, ulong M, long d, long prec);
-void _acb_poly_zeta_em_choose_param(arf_t bound, ulong * N, ulong * M, const acb_t s, const acb_t a, long d, long target, long prec);
-void _acb_poly_zeta_em_bound1(arf_t bound, const acb_t s, const acb_t a, long N, long M, long d, long wp);
+void _acb_poly_zeta_em_choose_param(mag_t bound, ulong * N, ulong * M, const acb_t s, const acb_t a, long d, long target, long prec);
+void _acb_poly_zeta_em_bound1(mag_t bound, const acb_t s, const acb_t a, long N, long M, long d, long wp);
 void _acb_poly_zeta_em_bound(arb_ptr vec, const acb_t s, const acb_t a, ulong N, ulong M, long d, long wp);
 
 void _acb_poly_zeta_em_tail_naive(acb_ptr sum, const acb_t s, const acb_t Na, acb_srcptr Nasx, long M, long len, long prec);

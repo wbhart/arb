@@ -32,7 +32,7 @@ int _arf_get_integer_mpn(mp_ptr y, mp_srcptr x, mp_size_t xn, long exp);
 int _arf_set_mpn_fixed(arf_t z, mp_srcptr xp, mp_size_t xn, mp_size_t fixn, int negative, long prec);
 
 void
-arb_exp_arf_huge(arb_t z, const arf_t x, long prec, long mag, int minus_one)
+arb_exp_arf_huge(arb_t z, const arf_t x, long mag, long prec, int minus_one)
 {
     arb_t ln2, t, u;
     fmpz_t q;
@@ -462,6 +462,49 @@ arb_expm1(arb_t z, const arb_t x, long prec)
         {
             arb_exp(z, x, prec);
             arb_sub_ui(z, z, 1, prec);
+        }
+    }
+}
+
+void
+arb_exp_invexp(arb_t z, arb_t w, const arb_t x, long prec)
+{
+    if (arb_is_exact(x))
+    {
+        arb_exp_arf(z, arb_midref(x), prec, 0);
+        arb_inv(w, z, prec);
+    }
+    else
+    {
+        /* exp(a+b) - exp(a) = exp(a) * (exp(b)-1) */
+        if (mag_cmp_2exp_si(arb_radref(x), 20) < 0 || !arb_is_finite(x))
+        {
+            mag_t t, u;
+
+            mag_init_set(t, arb_radref(x));
+            mag_init(u);
+
+            arb_exp_arf(z, arb_midref(x), prec, 0);
+            arb_inv(w, z, prec);
+
+            mag_expm1(t, t);
+
+            arb_get_mag(u, z);
+            mag_addmul(arb_radref(z), t, u);
+            arb_get_mag(u, w);
+            mag_addmul(arb_radref(w), t, u);
+
+            mag_clear(t);
+            mag_clear(u);
+        }
+        else
+        {
+            arb_t v;
+            arb_init(v);
+            arb_neg(v, x);
+            arb_exp(z, x, prec);
+            arb_exp(w, v, prec);
+            arb_clear(v);
         }
     }
 }

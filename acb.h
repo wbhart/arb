@@ -89,6 +89,18 @@ _acb_vec_clear(acb_ptr v, long n)
     flint_free(v);
 }
 
+ACB_INLINE void
+acb_get_real(arb_t re, const acb_t z)
+{
+    arb_set(re, acb_realref(z));
+}
+
+ACB_INLINE void
+acb_get_imag(arb_t im, const acb_t z)
+{
+    arb_set(im, acb_imagref(z));
+}
+
 ACB_INLINE int
 acb_is_zero(const acb_t z)
 {
@@ -166,7 +178,21 @@ ACB_INLINE int
 acb_equal(const acb_t x, const acb_t y)
 {
     return arb_equal(acb_realref(x), acb_realref(y)) &&
-            arb_equal(acb_imagref(x), acb_imagref(y));
+           arb_equal(acb_imagref(x), acb_imagref(y));
+}
+
+ACB_INLINE int
+acb_eq(const acb_t x, const acb_t y)
+{
+    return arb_eq(acb_realref(x), acb_realref(y)) &&
+           arb_eq(acb_imagref(x), acb_imagref(y));
+}
+
+ACB_INLINE int
+acb_ne(const acb_t x, const acb_t y)
+{
+    return arb_ne(acb_realref(x), acb_realref(y)) ||
+           arb_ne(acb_imagref(x), acb_imagref(y));
 }
 
 ACB_INLINE int
@@ -212,6 +238,13 @@ acb_set_ui(acb_t z, ulong c)
 }
 
 ACB_INLINE void
+acb_set_d(acb_t z, double c)
+{
+    arb_set_d(acb_realref(z), c);
+    arb_zero(acb_imagref(z));
+}
+
+ACB_INLINE void
 acb_set_si(acb_t z, long c)
 {
     arb_set_si(acb_realref(z), c);
@@ -219,10 +252,31 @@ acb_set_si(acb_t z, long c)
 }
 
 ACB_INLINE void
+acb_set_si_si(acb_t z, long x, long y)
+{
+    arb_set_si(acb_realref(z), x);
+    arb_set_si(acb_imagref(z), y);
+}
+
+ACB_INLINE void 
+acb_set_d_d(acb_t z, double x, double y)
+{
+    arb_set_d(acb_realref(z), x);
+    arb_set_d(acb_imagref(z), y);
+}
+
+ACB_INLINE void
 acb_set_fmpz(acb_t z, const fmpz_t c)
 {
     arb_set_fmpz(acb_realref(z), c);
     arb_zero(acb_imagref(z));
+}
+
+ACB_INLINE void
+acb_set_fmpz_fmpz(acb_t z, const fmpz_t x, const fmpz_t y)
+{
+    arb_set_fmpz(acb_realref(z), x);
+    arb_set_fmpz(acb_imagref(z), y);
 }
 
 ACB_INLINE void
@@ -249,6 +303,13 @@ acb_set_arb(acb_t z, const arb_t c)
 }
 
 ACB_INLINE void
+acb_set_arb_arb(acb_t z, const arb_t x, const arb_t y)
+{
+    arb_set(acb_realref(z), x);
+    arb_set(acb_imagref(z), y);
+}
+
+ACB_INLINE void
 acb_set_round_arb(acb_t z, const arb_t x, long prec)
 {
     arb_set_round(acb_realref(z), x, prec);
@@ -269,7 +330,6 @@ acb_add_error_arf(acb_t x, const arf_t err)
     arb_add_error_arf(acb_imagref(x), err);
 }
 
-/* TODO: document */
 ACB_INLINE void
 acb_add_error_mag(acb_t x, const mag_t err)
 {
@@ -367,9 +427,23 @@ acb_sub(acb_t z, const acb_t x, const acb_t y, long prec)
 }
 
 ACB_INLINE void
+acb_add_si(acb_t z, const acb_t x, ulong c, long prec)
+{
+    arb_add_si(acb_realref(z), acb_realref(x), c, prec);
+    arb_set_round(acb_imagref(z), acb_imagref(x), prec);
+}
+
+ACB_INLINE void
 acb_add_ui(acb_t z, const acb_t x, ulong c, long prec)
 {
     arb_add_ui(acb_realref(z), acb_realref(x), c, prec);
+    arb_set_round(acb_imagref(z), acb_imagref(x), prec);
+}
+
+ACB_INLINE void
+acb_sub_si(acb_t z, const acb_t x, ulong c, long prec)
+{
+    arb_sub_si(acb_realref(z), acb_realref(x), c, prec);
     arb_set_round(acb_imagref(z), acb_imagref(x), prec);
 }
 
@@ -468,6 +542,21 @@ acb_mul_onei(acb_t z, const acb_t x)
     {
         arb_neg(acb_realref(z), acb_imagref(x));
         arb_set(acb_imagref(z), acb_realref(x));
+    }
+}
+
+ACB_INLINE void
+acb_div_onei(acb_t z, const acb_t x)
+{
+    if (z == x)
+    {
+        arb_swap(acb_realref(z), acb_imagref(z));
+        arb_neg(acb_imagref(z), acb_imagref(z));
+    }
+    else
+    {
+        arb_set(acb_realref(z), acb_imagref(x));
+        arb_neg(acb_imagref(z), acb_realref(x));
     }
 }
 
@@ -599,6 +688,7 @@ void acb_atan(acb_t r, const acb_t z, long prec);
 
 void acb_exp(acb_t r, const acb_t z, long prec);
 void acb_exp_pi_i(acb_t r, const acb_t z, long prec);
+void acb_exp_invexp(acb_t r, acb_t s, const acb_t z, long prec);
 
 void acb_sin(acb_t r, const acb_t z, long prec);
 void acb_cos(acb_t r, const acb_t z, long prec);
@@ -606,10 +696,48 @@ void acb_sin_cos(acb_t s, acb_t c, const acb_t z, long prec);
 void acb_tan(acb_t r, const acb_t z, long prec);
 void acb_cot(acb_t r, const acb_t z, long prec);
 
+ACB_INLINE void
+acb_sinh(acb_t y, const acb_t x, long prec)
+{
+    acb_mul_onei(y, x);
+    acb_sin(y, y, prec);
+    acb_div_onei(y, y);
+}
+
+ACB_INLINE void
+acb_cosh(acb_t y, const acb_t x, long prec)
+{
+    acb_mul_onei(y, x);
+    acb_cos(y, y, prec);
+}
+
+ACB_INLINE void
+acb_sinh_cosh(acb_t y, acb_t z, const acb_t x, long prec)
+{
+    acb_mul_onei(y, x);
+    acb_sin_cos(y, z, y, prec);
+    acb_div_onei(y, y);
+}
+
+ACB_INLINE void
+acb_tanh(acb_t y, const acb_t x, long prec)
+{
+    acb_mul_onei(y, x);
+    acb_tan(y, y, prec);
+    acb_div_onei(y, y);
+}
+
+ACB_INLINE void
+acb_coth(acb_t y, const acb_t x, long prec)
+{
+    acb_mul_onei(y, x);
+    acb_cot(y, y, prec);
+    acb_mul_onei(y, y);
+}
+
 void acb_sin_pi(acb_t r, const acb_t z, long prec);
 void acb_cos_pi(acb_t r, const acb_t z, long prec);
 void acb_sin_cos_pi(acb_t s, acb_t c, const acb_t z, long prec);
-
 void acb_tan_pi(acb_t r, const acb_t z, long prec);
 void acb_cot_pi(acb_t r, const acb_t z, long prec);
 
@@ -633,9 +761,14 @@ void acb_rising_ui_get_mag(mag_t bound, const acb_t s, ulong n);
 void acb_gamma(acb_t y, const acb_t x, long prec);
 void acb_rgamma(acb_t y, const acb_t x, long prec);
 void acb_lgamma(acb_t y, const acb_t x, long prec);
+void acb_log_sin_pi(acb_t res, const acb_t z, long prec);
 void acb_digamma(acb_t y, const acb_t x, long prec);
 void acb_zeta(acb_t z, const acb_t s, long prec);
 void acb_hurwitz_zeta(acb_t z, const acb_t s, const acb_t a, long prec);
+void acb_polygamma(acb_t res, const acb_t s, const acb_t z, long prec);
+
+void acb_log_barnes_g(acb_t res, const acb_t z, long prec);
+void acb_barnes_g(acb_t res, const acb_t z, long prec);
 
 void acb_polylog(acb_t w, const acb_t s, const acb_t z, long prec);
 void acb_polylog_si(acb_t w, long s, const acb_t z, long prec);
@@ -652,14 +785,12 @@ void acb_root_newton(acb_t r, const acb_t a, long m, long index, long prec);
 void acb_root(acb_t r, const acb_t a, long m, long index, long prec);
 */
 
-/* TODO: document */
 ACB_INLINE int
 acb_is_finite(const acb_t x)
 {
     return arb_is_finite(acb_realref(x)) && arb_is_finite(acb_imagref(x));
 }
 
-/* TODO: document */
 ACB_INLINE void
 acb_indeterminate(acb_t x)
 {
@@ -766,6 +897,14 @@ _acb_vec_scalar_mul_2exp_si(acb_ptr res, acb_srcptr vec, long len, long c)
 }
 
 ACB_INLINE void
+_acb_vec_scalar_mul_onei(acb_ptr res, acb_srcptr vec, long len)
+{
+    long i;
+    for (i = 0; i < len; i++)
+        acb_mul_onei(res + i, vec + i);
+}
+
+ACB_INLINE void
 _acb_vec_scalar_div_ui(acb_ptr res, acb_srcptr vec, long len, ulong c, long prec)
 {
     long i;
@@ -833,6 +972,8 @@ void acb_randtest(acb_t z, flint_rand_t state, long prec, long mag_bits);
 void acb_randtest_special(acb_t z, flint_rand_t state, long prec, long mag_bits);
 
 void acb_randtest_precise(acb_t z, flint_rand_t state, long prec, long mag_bits);
+
+void acb_randtest_param(acb_t z, flint_rand_t state, long prec, long mag_bits);
 
 long acb_rel_error_bits(const acb_t x);
 

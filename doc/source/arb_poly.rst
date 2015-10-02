@@ -816,21 +816,6 @@ Powers and elementary functions
     simply wrap :func:`_arb_poly_sin_cos_series`. The underscore methods
     support aliasing and require the lengths to be nonzero.
 
-.. function:: void _arb_poly_sin_cos_pi_series(arb_ptr s, arb_ptr c, arb_srcptr h, long hlen, long n, long prec)
-
-.. function:: void arb_poly_sin_cos_pi_series(arb_poly_t s, arb_poly_t c, const arb_poly_t h, long n, long prec)
-
-.. function:: void _arb_poly_sin_pi_series(arb_ptr s, arb_srcptr h, long hlen, long n, long prec)
-
-.. function:: void arb_poly_sin_pi_series(arb_poly_t s, const arb_poly_t h, long n, long prec)
-
-.. function:: void _arb_poly_cos_pi_series(arb_ptr c, arb_srcptr h, long hlen, long n, long prec)
-
-.. function:: void arb_poly_cos_pi_series(arb_poly_t c, const arb_poly_t h, long n, long prec)
-
-    Compute the respective trigonometric functions of the input
-    multiplied by `\pi`.
-
 .. function:: void _arb_poly_tan_series(arb_ptr g, arb_srcptr h, long hlen, long len, long prec)
 
 .. function:: void arb_poly_tan_series(arb_poly_t g, const arb_poly_t h, long n, long prec)
@@ -843,6 +828,25 @@ Powers and elementary functions
 
     The underscore version does not support aliasing, and requires
     the lengths to be nonzero.
+
+.. function:: void _arb_poly_sin_cos_pi_series(arb_ptr s, arb_ptr c, arb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void arb_poly_sin_cos_pi_series(arb_poly_t s, arb_poly_t c, const arb_poly_t h, long n, long prec)
+
+.. function:: void _arb_poly_sin_pi_series(arb_ptr s, arb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void arb_poly_sin_pi_series(arb_poly_t s, const arb_poly_t h, long n, long prec)
+
+.. function:: void _arb_poly_cos_pi_series(arb_ptr c, arb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void arb_poly_cos_pi_series(arb_poly_t c, const arb_poly_t h, long n, long prec)
+
+.. function:: void _arb_poly_cot_pi_series(arb_ptr c, arb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void arb_poly_cot_pi_series(arb_poly_t c, const arb_poly_t h, long n, long prec)
+
+    Compute the respective trigonometric functions of the input
+    multiplied by `\pi`.
 
 Gamma function and factorials
 -------------------------------------------------------------------------------
@@ -859,8 +863,12 @@ Gamma function and factorials
 
 .. function:: void arb_poly_lgamma_series(arb_poly_t res, const arb_poly_t h, long n, long prec)
 
+.. function:: void _arb_poly_digamma_series(arb_ptr res, arb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void arb_poly_digamma_series(arb_poly_t res, const arb_poly_t h, long n, long prec)
+
     Sets *res* to the series expansion of `\Gamma(h(x))`, `1/\Gamma(h(x))`,
-    or `\log \Gamma(h(x))`, truncated to length *n*.
+    or `\log \Gamma(h(x))`, `\psi(h(x))`, truncated to length *n*.
 
     These functions first generate the Taylor series at the constant
     term of *h*, and then call :func:`_arb_poly_compose_series`.
@@ -938,6 +946,24 @@ Zeta function
 
 Root-finding
 -------------------------------------------------------------------------------
+
+.. function:: void _arb_poly_root_bound_fujiwara(mag_t bound, arb_srcptr poly, long len)
+
+.. function:: void arb_poly_root_bound_fujiwara(mag_t bound, arb_poly_t poly)
+
+    Sets *bound* to an upper bound for the magnitude of all the complex
+    roots of *poly*. Uses Fujiwara's bound
+
+    .. math ::
+
+        2 \max \left\{\left|\frac{a_{n-1}}{a_n}\right|,
+                      \left|\frac{a_{n-2}}{a_n}\right|^{1/2},
+                      \cdots,
+                      \left|\frac{a_1}{a_n}\right|^{1/(n-1)},
+                      \left|\frac{a_0}{2a_n}\right|^{1/n}
+               \right\}
+
+    where `a_0, \ldots, a_n` are the coefficients of *poly*.
 
 .. function:: void _arb_poly_newton_convergence_factor(arf_t convergence_factor, arb_srcptr poly, long len, const arb_t convergence_interval, long prec)
 

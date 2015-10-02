@@ -720,21 +720,6 @@ Elementary functions
     simply wrap :func:`_acb_poly_sin_cos_series`. The underscore methods
     support aliasing and require the lengths to be nonzero.
 
-.. function:: void _acb_poly_sin_cos_pi_series(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
-
-.. function:: void acb_poly_sin_cos_pi_series(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
-
-.. function:: void _acb_poly_sin_pi_series(acb_ptr s, acb_srcptr h, long hlen, long n, long prec)
-
-.. function:: void acb_poly_sin_pi_series(acb_poly_t s, const acb_poly_t h, long n, long prec)
-
-.. function:: void _acb_poly_cos_pi_series(acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
-
-.. function:: void acb_poly_cos_pi_series(acb_poly_t c, const acb_poly_t h, long n, long prec)
-
-    Compute the respective trigonometric functions of the input
-    multiplied by `\pi`.
-
 .. function:: void _acb_poly_tan_series(acb_ptr g, acb_srcptr h, long hlen, long len, long prec)
 
 .. function:: void acb_poly_tan_series(acb_poly_t g, const acb_poly_t h, long n, long prec)
@@ -747,6 +732,25 @@ Elementary functions
 
     The underscore version does not support aliasing, and requires
     the lengths to be nonzero.
+
+.. function:: void _acb_poly_sin_cos_pi_series(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void acb_poly_sin_cos_pi_series(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
+
+.. function:: void _acb_poly_sin_pi_series(acb_ptr s, acb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void acb_poly_sin_pi_series(acb_poly_t s, const acb_poly_t h, long n, long prec)
+
+.. function:: void _acb_poly_cos_pi_series(acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void acb_poly_cos_pi_series(acb_poly_t c, const acb_poly_t h, long n, long prec)
+
+.. function:: void _acb_poly_cot_pi_series(acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void acb_poly_cot_pi_series(acb_poly_t c, const acb_poly_t h, long n, long prec)
+
+    Compute the respective trigonometric functions of the input
+    multiplied by `\pi`.
 
 Gamma function
 -------------------------------------------------------------------------------
@@ -763,8 +767,12 @@ Gamma function
 
 .. function:: void acb_poly_lgamma_series(acb_poly_t res, const acb_poly_t h, long n, long prec)
 
+.. function:: void _acb_poly_digamma_series(acb_ptr res, acb_srcptr h, long hlen, long n, long prec)
+
+.. function:: void acb_poly_digamma_series(acb_poly_t res, const acb_poly_t h, long n, long prec)
+
     Sets *res* to the series expansion of `\Gamma(h(x))`, `1/\Gamma(h(x))`,
-    or `\log \Gamma(h(x))`, truncated to length *n*.
+    or `\log \Gamma(h(x))`, `\psi(h(x))`, truncated to length *n*.
 
     These functions first generate the Taylor series at the constant
     term of *h*, and then call :func:`_acb_poly_compose_series`.
@@ -820,12 +828,12 @@ Power sums
 Zeta function
 -------------------------------------------------------------------------------
 
-.. function:: void _acb_poly_zeta_em_choose_param(arf_t bound, ulong * N, ulong * M, const acb_t s, const acb_t a, long d, long target, long prec)
+.. function:: void _acb_poly_zeta_em_choose_param(mag_t bound, ulong * N, ulong * M, const acb_t s, const acb_t a, long d, long target, long prec)
 
     Chooses *N* and *M* for Euler-Maclaurin summation of the
     Hurwitz zeta function, using a default algorithm.
 
-.. function:: void _acb_poly_zeta_em_bound1(arf_t bound, const acb_t s, const acb_t a, long N, long M, long d, long wp)
+.. function:: void _acb_poly_zeta_em_bound1(mag_t bound, const acb_t s, const acb_t a, long N, long M, long d, long wp)
 
 .. function:: void _acb_poly_zeta_em_bound(arb_ptr vec, const acb_t s, const acb_t a, ulong N, ulong M, long d, long wp)
 
@@ -945,6 +953,24 @@ Other special functions
 
 Root-finding
 -------------------------------------------------------------------------------
+
+.. function:: void _acb_poly_root_bound_fujiwara(mag_t bound, acb_srcptr poly, long len)
+
+.. function:: void acb_poly_root_bound_fujiwara(mag_t bound, acb_poly_t poly)
+
+    Sets *bound* to an upper bound for the magnitude of all the complex
+    roots of *poly*. Uses Fujiwara's bound
+
+    .. math ::
+
+        2 \max \left\{\left|\frac{a_{n-1}}{a_n}\right|,
+                      \left|\frac{a_{n-2}}{a_n}\right|^{1/2},
+                      \cdots,
+                      \left|\frac{a_1}{a_n}\right|^{1/(n-1)},
+                      \left|\frac{a_0}{2a_n}\right|^{1/n}
+               \right\}
+
+    where `a_0, \ldots, a_n` are the coefficients of *poly*.
 
 .. function:: void _acb_poly_root_inclusion(acb_t r, const acb_t m, acb_srcptr poly, acb_srcptr polyder, long len, long prec)
 

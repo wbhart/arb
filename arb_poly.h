@@ -550,6 +550,10 @@ void _arb_poly_cos_pi_series(arb_ptr g, arb_srcptr h, long hlen, long n, long pr
 
 void arb_poly_cos_pi_series(arb_poly_t g, const arb_poly_t h, long n, long prec);
 
+void _arb_poly_cot_pi_series(arb_ptr g, arb_srcptr h, long hlen, long n, long prec);
+
+void arb_poly_cot_pi_series(arb_poly_t g, const arb_poly_t h, long n, long prec);
+
 void _arb_poly_tan_series(arb_ptr g, arb_srcptr h, long hlen, long len, long prec);
 
 void arb_poly_tan_series(arb_poly_t g, const arb_poly_t h, long n, long prec);
@@ -589,6 +593,9 @@ void arb_poly_rgamma_series(arb_poly_t res, const arb_poly_t f, long n, long pre
 void _arb_poly_lgamma_series(arb_ptr res, arb_srcptr h, long hlen, long len, long prec);
 void arb_poly_lgamma_series(arb_poly_t res, const arb_poly_t f, long n, long prec);
 
+void _arb_poly_digamma_series(arb_ptr res, arb_srcptr h, long hlen, long len, long prec);
+void arb_poly_digamma_series(arb_poly_t res, const arb_poly_t f, long n, long prec);
+
 void _arb_poly_rising_ui_series(arb_ptr res, arb_srcptr f, long flen, ulong r, long trunc, long prec);
 void arb_poly_rising_ui_series(arb_poly_t res, const arb_poly_t f, ulong r, long trunc, long prec);
 
@@ -622,6 +629,10 @@ void _arb_poly_newton_refine_root(arb_t r, arb_srcptr poly,
     const arf_t convergence_factor,
     long eval_extra_prec,
     long prec);
+
+void _arb_poly_root_bound_fujiwara(mag_t bound, arb_srcptr poly, long len);
+
+void arb_poly_root_bound_fujiwara(mag_t bound, arb_poly_t poly);
 
 /* Macros */
 

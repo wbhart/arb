@@ -50,12 +50,12 @@ acb_hypgeom_bessel_k_asymp(acb_t res, const acb_t nu, const acb_t z, long prec)
     acb_exp(w, w, prec);    
     acb_mul(t, t, w, prec);
 
-    acb_const_pi(w, prec);
-    acb_div(w, w, z, prec);
-    acb_mul_2exp_si(w, w, -1);
-    acb_sqrt(w, w, prec);
-
+    acb_mul_2exp_si(w, z, 1);
+    acb_rsqrt(w, w, prec);
     acb_mul(res, t, w, prec);
+
+    arb_const_sqrt_pi(acb_realref(w), prec);
+    acb_mul_arb(res, res, acb_realref(w), prec);
 
     acb_clear(t);
     acb_clear(a);
@@ -95,12 +95,12 @@ acb_hypgeom_bessel_k_0f1_series(acb_poly_t res,
 
     acb_poly_one(b + 1);
     acb_poly_add_si(b + 0, nu, 1, prec);
-    acb_hypgeom_pfq_series_direct(s, NULL, 0, b, 2, u, -1, wlen, prec, 1);
+    acb_hypgeom_pfq_series_direct(s, NULL, 0, b, 2, u, 1, -1, wlen, prec);
     acb_poly_mullow(A, A, s, wlen, prec);
 
     acb_poly_add_si(b + 0, nu, -1, prec);
     acb_poly_neg(b + 0, b + 0);
-    acb_hypgeom_pfq_series_direct(s, NULL, 0, b, 2, u, -1, wlen, prec, 1);
+    acb_hypgeom_pfq_series_direct(s, NULL, 0, b, 2, u, 1, -1, wlen, prec);
     acb_poly_mullow(B, B, s, wlen, prec);
 
     acb_poly_sub(A, B, A, prec);

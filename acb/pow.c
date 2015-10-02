@@ -168,6 +168,15 @@ acb_pow_arb(acb_t z, const acb_t x, const arb_t y, long prec)
         return;
     }
 
+    if (acb_is_zero(x))
+    {
+        if (arb_is_positive(y))
+            acb_zero(z);
+        else
+            acb_indeterminate(z);
+        return;
+    }
+
     if (mag_is_zero(yrad))
     {
         /* small half-integer or integer */
@@ -184,14 +193,6 @@ acb_pow_arb(acb_t z, const acb_t x, const arb_t y, long prec)
             }
             else
             {
-                /* hack: give something finite here (should fix sqrt/rsqrt etc) */
-                if (arb_contains_zero(acb_imagref(x)) && arb_contains_nonpositive(acb_realref(x)))
-                {
-                    _acb_pow_arb_exp(z, x, y, prec);
-                    fmpz_clear(e);
-                    return;
-                }
-
                 arf_get_fmpz_fixed_si(e, ymid, -1);
                 acb_sqrt(z, x, prec + fmpz_bits(e));
                 acb_pow_fmpz_binexp(z, z, e, prec);
@@ -214,6 +215,15 @@ acb_pow(acb_t z, const acb_t x, const acb_t y, long prec)
     }
     else
     {
+        if (acb_is_zero(x))
+        {
+            if (arb_is_positive(acb_realref(y)))
+                acb_zero(z);
+            else
+                acb_indeterminate(z);
+            return;
+        }
+
         _acb_pow_exp(z, x, y, prec);
     }
 }

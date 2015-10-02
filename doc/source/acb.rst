@@ -48,14 +48,14 @@ Types, macros and constants
 
     Macro returning a pointer to the real part of *x* as an *arb_t*.
 
-.. macro:: arb_imagref(x)
+.. macro:: acb_imagref(x)
 
     Macro returning a pointer to the imaginary part of *x* as an *arb_t*.
 
 Memory management
 -------------------------------------------------------------------------------
 
-.. function:: void acb_init(arb_t x)
+.. function:: void acb_init(acb_t x)
 
     Initializes the variable *x* for use, and sets its value to zero.
 
@@ -82,6 +82,10 @@ Basic manipulation
 
     Returns nonzero iff *z* is exactly 1.
 
+.. function:: int acb_is_finite(const acb_t z)
+
+    Returns nonzero iff *z* certainly is finite.
+
 .. function:: int acb_is_exact(const acb_t z)
 
     Returns nonzero iff *z* is exact.
@@ -104,11 +108,23 @@ Basic manipulation
 
 .. function:: void acb_set_si(acb_t z, long x)
 
+.. function:: void acb_set_d(acb_t z, double x)
+
 .. function:: void acb_set_fmpz(acb_t z, const fmpz_t x)
 
 .. function:: void acb_set_arb(acb_t z, const arb_t c)
 
     Sets *z* to the value of *x*.
+
+.. function:: void acb_set_si_si(acb_t z, long x, long y)
+
+.. function:: void acb_set_d_d(acb_t z, double x, double y)
+
+.. function:: void acb_set_fmpz_fmpz(acb_t z, const fmpz_t x, const fmpz_t y)
+
+.. function:: void acb_set_arb_arb(acb_t z, const arb_t x, const arb_t y)
+
+    Sets the real and imaginary part of *z* to the values *x* and *y* respectively
 
 .. function:: void acb_set_fmpq(acb_t z, const fmpq_t x, long prec)
 
@@ -124,6 +140,10 @@ Basic manipulation
 
     Swaps *z* and *x* efficiently.
 
+.. function:: void acb_add_error_mag(acb_t x, const mag_t err)
+
+    Adds *err* to the error bounds of both the real and imaginary
+    parts of *x*, modifying *x* in-place.
 
 Input and output
 -------------------------------------------------------------------------------
@@ -156,6 +176,11 @@ Random number generation
 
     Generates a random complex number with precise real and imaginary parts.
 
+.. function:: void acb_randtest_param(acb_t z, flint_rand_t state, long prec, long mag_bits)
+
+    Generates a random complex number, with very high probability of
+    generating integers and half-integers.
+
 Precision and comparisons
 -------------------------------------------------------------------------------
 
@@ -170,6 +195,17 @@ Precision and comparisons
     To test whether both operands *might* represent the same mathematical
     quantity, use :func:`acb_overlaps` or :func:`acb_contains`,
     depending on the circumstance.
+
+.. function:: int acb_eq(const acb_t x, const acb_t y)
+
+    Returns nonzero iff *x* and *y* are certainly equal, as determined
+    by testing that :func:`arb_eq` holds for both the real and imaginary
+    parts.
+
+.. function:: int acb_ne(const acb_t x, const acb_t y)
+
+    Returns nonzero iff *x* and *y* are certainly not equal, as determined
+    by testing that :func:`arb_ne` holds for either the real or imaginary parts.
 
 .. function:: int acb_overlaps(const acb_t x, const acb_t y)
 
@@ -218,7 +254,7 @@ Precision and comparisons
     midpoints of *x*, and whose radius is the larger out of the real
     and imaginary radiuses of *x*.
 
-.. function:: long acb_rel_accuracy_bits(const arb_t x)
+.. function:: long acb_rel_accuracy_bits(const acb_t x)
 
     Returns the effective relative accuracy of *x* measured in bits,
     equal to the negative of the return value from :func:`acb_rel_error_bits`.
@@ -228,6 +264,12 @@ Precision and comparisons
     Returns the maximum of *arb_bits* applied to the real
     and imaginary parts of *x*, i.e. the minimum precision sufficient
     to represent *x* exactly.
+
+.. function:: void acb_indeterminate(acb_t x)
+
+    Sets *x* to
+    `[\operatorname{NaN} \pm \infty] + [\operatorname{NaN} \pm \infty]i`,
+    representing an indeterminate result.
 
 .. function:: void acb_trim(acb_t y, const acb_t x)
 
@@ -248,6 +290,14 @@ Precision and comparisons
 Complex parts
 -------------------------------------------------------------------------------
 
+.. function:: void acb_get_real(arb_t re, const acb_t z)
+
+    Sets *re* to the real part of *z*.
+
+.. function:: void acb_get_imag(arb_t im, const acb_t z)
+
+    Sets *im* to the imaginary part of *z*.
+
 .. function:: void acb_arg(arb_t r, const acb_t z, long prec)
 
     Sets *r* to a real interval containing the complex argument (phase) of *z*.
@@ -260,7 +310,6 @@ Complex parts
 .. function:: void acb_abs(arb_t r, const acb_t z, long prec)
 
     Sets *r* to the absolute value of *z*.
-
 
 Arithmetic
 -------------------------------------------------------------------------------
@@ -275,6 +324,8 @@ Arithmetic
 
 .. function:: void acb_add_ui(acb_t z, const acb_t x, ulong y, long prec)
 
+.. function:: void acb_add_si(acb_t z, const acb_t x, long y, long prec)
+
 .. function:: void acb_add_fmpz(acb_t z, const acb_t x, const fmpz_t y, long prec)
 
 .. function:: void acb_add_arb(acb_t z, const acb_t x, const arb_t y, long prec)
@@ -284,6 +335,8 @@ Arithmetic
     Sets *z* to the sum of *x* and *y*.
 
 .. function:: void acb_sub_ui(acb_t z, const acb_t x, ulong y, long prec)
+
+.. function:: void acb_sub_si(acb_t z, const acb_t x, long y, long prec)
 
 .. function:: void acb_sub_fmpz(acb_t z, const acb_t x, const fmpz_t y, long prec)
 
@@ -296,6 +349,10 @@ Arithmetic
 .. function:: void acb_mul_onei(acb_t z, const acb_t x)
 
     Sets *z* to *x* multiplied by the imaginary unit.
+
+.. function:: void acb_div_onei(acb_t z, const acb_t x)
+
+    Sets *z* to *x* divided by the imaginary unit.
 
 .. function:: void acb_mul_ui(acb_t z, const acb_t x, ulong y, long prec)
 
@@ -359,84 +416,37 @@ Arithmetic
 
 .. function:: void acb_div_fmpz(acb_t z, const acb_t x, const fmpz_t y, long prec)
 
+.. function:: void acb_div_arb(acb_t z, const acb_t x, const arb_t y, long prec)
+
 .. function:: void acb_div(acb_t z, const acb_t x, const acb_t y, long prec)
 
     Sets *z* to the quotient of *x* and *y*.
 
-Elementary functions
+Mathematical constants
 -------------------------------------------------------------------------------
 
 .. function:: void acb_const_pi(acb_t y, long prec)
 
     Sets *y* to the constant `\pi`.
 
-.. function:: void acb_log(acb_t y, const acb_t z, long prec)
+Powers and roots
+-------------------------------------------------------------------------------
 
-    Sets *y* to the principal branch of the natural logarithm of *z*,
-    computed as
-    `\log(a+bi) = \frac{1}{2} \log(a^2 + b^2) + i \operatorname{arg}(a+bi)`.
+.. function:: void acb_sqrt(acb_t r, const acb_t z, long prec)
 
-.. function:: void acb_log1p(acb_t z, const acb_t x, long prec)
+    Sets *r* to the square root of *z*.
+    If either the real or imaginary part is exactly zero, only
+    a single real square root is needed. Generally, we use the formula
+    `\sqrt{a+bi} = u/2 + ib/u, u = \sqrt{2(|a+bi|+a)}`,
+    requiring two real square root extractions.
 
-    Sets `z = \log(1+x)`, computed accurately when `x \approx 0`.
+.. function:: void acb_rsqrt(acb_t r, const acb_t z, long prec)
 
-.. function:: void acb_exp(acb_t y, const acb_t z, long prec)
-
-    Sets *y* to the exponential function of *z*, computed as
-    `\exp(a+bi) = \exp(a) \left( \cos(b) + \sin(b) i \right)`.
-
-.. function:: void acb_exp_pi_i(acb_t y, const acb_t z, long prec)
-
-    Sets *y* to `\exp(\pi i z)`.
-
-.. function:: void acb_sin(acb_t s, const acb_t z, long prec)
-
-.. function:: void acb_cos(acb_t c, const acb_t z, long prec)
-
-.. function:: void acb_sin_cos(arb_t s, arb_t c, const arb_t z, long prec)
-
-    Sets `s = \sin(z)`, `c = \cos(z)`, evaluated as
-    `\sin(a+bi) = \sin(a)\cosh(b) + i \cos(a)\sinh(b)`,
-    `\cos(a+bi) = \cos(a)\cosh(b) - i \sin(a)\sinh(b)`.
-
-.. function:: void acb_tan(acb_t s, const acb_t z, long prec)
-
-    Sets `s = \tan(z) = \sin(z) / \cos(z)`, evaluated as
-    `\tan(a+bi) = \sin(2a)/(\cos(2a) + \cosh(2b)) + i\sinh(2b)/(\cos(2a) + \cosh(2b))`.
-    If `|b|` is small, the formula is evaluated as written; otherwise,
-    we rewrite the hyperbolic functions in terms of decaying exponentials
-    and evaluate the expression accurately using :func:`arb_expm1`.
-
-.. function:: void acb_cot(acb_t s, const acb_t z, long prec)
-
-    Sets `s = \cot(z) = \cos(z) / \sin(z)`, evaluated as
-    `\cot(a+bi) = -\sin(2a)/(\cos(2a) - \cosh(2b)) + i\sinh(2b)/(\cos(2a) - \cosh(2b))`
-    using the same strategy as :func:`acb_tan`.
-    If `|z|` is close to zero, however, we evaluate
-    `1 / \tan(z)` to avoid catastrophic cancellation.
-
-.. function:: void acb_sin_pi(acb_t s, const acb_t z, long prec)
-
-.. function:: void acb_cos_pi(acb_t s, const acb_t z, long prec)
-
-.. function:: void acb_sin_cos_pi(acb_t s, acb_t c, const acb_t z, long prec)
-
-    Sets `s = \sin(\pi z)`, `c = \cos(\pi z)`, evaluating the trigonometric
-    factors of the real and imaginary part accurately via :func:`arb_sin_cos_pi`.
-
-.. function:: void acb_tan_pi(acb_t s, const acb_t z, long prec)
-
-    Sets `s = \tan(\pi z)`. Uses the same algorithm as :func:`acb_tan`,
-    but evaluating the sine and cosine accurately via :func:`arb_sin_cos_pi`.
-
-.. function:: void acb_cot_pi(acb_t s, const acb_t z, long prec)
-
-    Sets `s = \cot(\pi z)`. Uses the same algorithm as :func:`acb_cot`,
-    but evaluating the sine and cosine accurately via :func:`arb_sin_cos_pi`.
-
-.. function:: void acb_atan(acb_t s, const acb_t z, long prec)
-
-    Sets `s = \operatorname{atan}(z) = \tfrac{1}{2} i (\log(1-iz)-\log(1+iz))`.
+    Sets *r* to the reciprocal square root of *z*.
+    If either the real or imaginary part is exactly zero, only
+    a single real reciprocal square root is needed. Generally, we use the
+    formula `1/\sqrt{a+bi} = ((a+r) - bi)/v, r = |a+bi|, v = \sqrt{r |a+bi+r|^2}`,
+    requiring one real square root and one real reciprocal square root.
 
 .. function:: void acb_pow_fmpz(acb_t y, const acb_t b, const fmpz_t e, long prec)
 
@@ -456,21 +466,98 @@ Elementary functions
     a small exact integer, as `z = (x^{1/2})^{2y}` if `y` is a small exact
     half-integer, and generally as `z = \exp(y \log x)`.
 
-.. function:: void acb_sqrt(acb_t r, const acb_t z, long prec)
+Exponentials and logarithms
+-------------------------------------------------------------------------------
 
-    Sets *r* to the square root of *z*.
-    If either the real or imaginary part is exactly zero, only
-    a single real square root is needed. Generally, we use the formula
-    `\sqrt{a+bi} = u/2 + ib/u, u = \sqrt{2(|a+bi|+a)}`,
-    requiring two real square root extractions.
+.. function:: void acb_exp(acb_t y, const acb_t z, long prec)
 
-.. function:: void acb_rsqrt(acb_t r, const acb_t z, long prec)
+    Sets *y* to the exponential function of *z*, computed as
+    `\exp(a+bi) = \exp(a) \left( \cos(b) + \sin(b) i \right)`.
 
-    Sets *r* to the reciprocal square root of *z*.
-    If either the real or imaginary part is exactly zero, only
-    a single real reciprocal square root is needed. Generally, we use the
-    formula `1/\sqrt{a+bi} = ((a+r) - bi)/v, r = |a+bi|, v = \sqrt{r |a+bi+r|^2}`,
-    requiring one real square root and one real reciprocal square root.
+.. function:: void acb_exp_pi_i(acb_t y, const acb_t z, long prec)
+
+    Sets *y* to `\exp(\pi i z)`.
+
+.. function:: void acb_exp_invexp(acb_t s, acb_t t, const acb_t z, long prec)
+
+    Sets `v = \exp(z)` and `w = \exp(-z)`.
+
+.. function:: void acb_log(acb_t y, const acb_t z, long prec)
+
+    Sets *y* to the principal branch of the natural logarithm of *z*,
+    computed as
+    `\log(a+bi) = \frac{1}{2} \log(a^2 + b^2) + i \operatorname{arg}(a+bi)`.
+
+.. function:: void acb_log1p(acb_t z, const acb_t x, long prec)
+
+    Sets `z = \log(1+x)`, computed accurately when `x \approx 0`.
+
+Trigonometric functions
+-------------------------------------------------------------------------------
+
+.. function:: void acb_sin(acb_t s, const acb_t z, long prec)
+
+.. function:: void acb_cos(acb_t c, const acb_t z, long prec)
+
+.. function:: void acb_sin_cos(acb_t s, acb_t c, const acb_t z, long prec)
+
+    Sets `s = \sin(z)`, `c = \cos(z)`, evaluated as
+    `\sin(a+bi) = \sin(a)\cosh(b) + i \cos(a)\sinh(b)`,
+    `\cos(a+bi) = \cos(a)\cosh(b) - i \sin(a)\sinh(b)`.
+
+.. function:: void acb_tan(acb_t s, const acb_t z, long prec)
+
+    Sets `s = \tan(z) = \sin(z) / \cos(z)`. For large imaginary parts,
+    the function is evaluated in a numerically stable way as `\pm i`
+    plus a decreasing exponential factor.
+
+.. function:: void acb_cot(acb_t s, const acb_t z, long prec)
+
+    Sets `s = \cot(z) = \cos(z) / \sin(z)`. For large imaginary parts,
+    the function is evaluated in a numerically stable way as `\pm i`
+    plus a decreasing exponential factor.
+
+.. function:: void acb_sin_pi(acb_t s, const acb_t z, long prec)
+
+.. function:: void acb_cos_pi(acb_t s, const acb_t z, long prec)
+
+.. function:: void acb_sin_cos_pi(acb_t s, acb_t c, const acb_t z, long prec)
+
+    Sets `s = \sin(\pi z)`, `c = \cos(\pi z)`, evaluating the trigonometric
+    factors of the real and imaginary part accurately via :func:`arb_sin_cos_pi`.
+
+.. function:: void acb_tan_pi(acb_t s, const acb_t z, long prec)
+
+    Sets `s = \tan(\pi z)`. Uses the same algorithm as :func:`acb_tan`,
+    but evaluates the sine and cosine accurately via :func:`arb_sin_cos_pi`.
+
+.. function:: void acb_cot_pi(acb_t s, const acb_t z, long prec)
+
+    Sets `s = \cot(\pi z)`. Uses the same algorithm as :func:`acb_cot`,
+    but evaluates the sine and cosine accurately via :func:`arb_sin_cos_pi`.
+
+Inverse trigonometric functions
+-------------------------------------------------------------------------------
+
+.. function:: void acb_atan(acb_t s, const acb_t z, long prec)
+
+    Sets `s = \operatorname{atan}(z) = \tfrac{1}{2} i (\log(1-iz)-\log(1+iz))`.
+
+Hyperbolic functions
+-------------------------------------------------------------------------------
+
+.. function:: void acb_sinh(acb_t s, const acb_t z, long prec)
+
+.. function:: void acb_cosh(acb_t c, const acb_t z, long prec)
+
+.. function:: void acb_sinh_cosh(acb_t s, acb_t c, const acb_t z, long prec)
+
+.. function:: void acb_tanh(acb_t s, const acb_t z, long prec)
+
+.. function:: void acb_coth(acb_t s, const acb_t z, long prec)
+
+    Respectively computes `\sinh(z) = -i\sin(iz)`, `\cosh(z) = \cos(iz)`,
+    `\tanh(z) = -i\tan(iz)`, `\coth(z) = i\cot(iz)`.
 
 Rising factorials
 -------------------------------------------------------------------------------
@@ -532,12 +619,91 @@ Gamma function
     negative half-axis, which means that
     `\log \Gamma(z) + \log z = \log \Gamma(z+1)` holds for all `z`,
     whereas `\log \Gamma(z) \ne \log(\Gamma(z))` in general.
-    Warning: this function does not currently use the reflection
-    formula, and gets very slow for `z` far into the left half-plane.
+    In the left half plane, the reflection formula with correct
+    branch structure is evaluated via :func:`acb_log_sin_pi`.
 
 .. function:: void acb_digamma(acb_t y, const acb_t x, long prec)
 
     Computes the digamma function `y = \psi(x) = (\log \Gamma(x))' = \Gamma'(x) / \Gamma(x)`.
+
+.. function:: void acb_log_sin_pi(acb_t res, const acb_t z, long prec)
+
+    Computes the logarithmic sine function defined by
+
+    .. math ::
+
+        S(z) = \log(\pi) - \log \Gamma(z) + \log \Gamma(1-z)
+
+    which is equal to
+
+    .. math ::
+
+        S(z) = \int_{1/2}^z \pi \cot(\pi t) dt
+
+    where the path of integration goes through the upper half plane
+    if `0 < \arg(z) \le \pi` and through the lower half plane
+    if `-\pi < \arg(z) \le 0`. Equivalently,
+
+    .. math ::
+
+        S(z) = \log(\sin(\pi(z-n))) \mp n \pi i, \quad n = \lfloor \operatorname{re}(z) \rfloor
+
+    where the negative sign is taken if `0 < \arg(z) \le \pi`
+    and the positive sign is taken otherwise (if the interval `\arg(z)`
+    does not certainly satisfy either condition, the union of
+    both cases is computed).
+    After subtracting *n*, we have `0 \le \operatorname{re}(z) < 1`. In
+    this strip, we use
+    use `S(z) = \log(\sin(\pi(z)))` if the imaginary part of *z* is small.
+    Otherwise, we use `S(z) = i \pi (z-1/2) + \log((1+e^{-2i\pi z})/2)`
+    in the lower half-plane and the conjugated expression in the upper
+    half-plane to avoid exponent overflow.
+
+    The function is evaluated at the midpoint and the propagated error
+    is computed from `S'(z)` to get a continuous change
+    when `z` is non-real and `n` spans more than one possible integer value.
+
+.. function:: void acb_polygamma(acb_t z, const acb_t s, const acb_t z, long prec)
+
+    Sets *res* to the value of the generalized polygamma function `\psi(s,z)`.
+
+    If *s* is a nonnegative order, this is simply the *s*-order derivative
+    of the digamma function. If `s = 0`, this function simply
+    calls the digamma function internally. For integers `s \ge 1`,
+    it calls the Hurwitz zeta function. Note that for small integers
+    `s \ge 1`, it can be faster to use
+    :func:`acb_poly_digamma_series` and read off the coefficients.
+
+    The generalization to other values of *s* is due to
+    Espinosa and Moll [EM2004]_:
+
+    .. math ::
+
+        \psi(s,z) = \frac{\zeta'(s+1,z) + (\gamma + \psi(-s)) \zeta(s+1,z)}{\Gamma(-s)}
+
+.. function:: void acb_barnes_g(acb_t res, const acb_t z, long prec)
+
+.. function:: void acb_log_barnes_g(acb_t res, const acb_t z, long prec)
+
+    Computes Barnes *G*-function or the logarithmic Barnes *G*-function,
+    respectively. The logarithmic version has branch cuts on the negative
+    real axis and is continuous elsewhere in the complex plane,
+    in analogy with the logarithmic gamma function. The functional
+    equation
+
+    .. math ::
+
+        \log G(z+1) = \log \Gamma(z) + \log G(z).
+
+    holds for all *z*.
+
+    For small integers, we directly use the recurrence
+    relation `G(z+1) = \Gamma(z) G(z)` together with the initial value
+    `G(1) = 1`. For general *z*, we use the formula
+
+    .. math ::
+
+        \log G(z) = (z-1) \log \Gamma(z) - \zeta'(-1,z) + \zeta'(-1).
 
 Zeta function
 -------------------------------------------------------------------------------
@@ -579,4 +745,94 @@ Arithmetic-geometric mean
     Sets the coefficients in the array *m* to the power series expansion of the
     arithmetic-geometric mean at the point *z* truncated to length *len*, i.e.
     `M(z+x) \in \mathbb{C}[[x]]`.
+
+Vector functions
+-------------------------------------------------------------------------------
+
+.. function:: void _acb_vec_zero(acb_ptr A, long n)
+
+    Sets all entries in *vec* to zero.
+
+.. function:: int _acb_vec_is_zero(acb_srcptr vec, long len)
+
+    Returns nonzero iff all entries in *x* are zero.
+
+.. function:: int _acb_vec_is_real(acb_srcptr v, long len)
+
+    Returns nonzero iff all entries in *x* have zero imaginary part.
+
+.. function:: void _acb_vec_set(acb_ptr res, acb_srcptr vec, long len)
+
+    Sets *res* to a copy of *vec*.
+
+.. function:: void _acb_vec_set_round(acb_ptr res, acb_srcptr vec, long len, long prec)
+
+    Sets *res* to a copy of *vec*, rounding each entry to *prec* bits.
+
+.. function:: void _acb_vec_neg(acb_ptr res, acb_srcptr vec, long len)
+
+.. function:: void _acb_vec_add(acb_ptr res, acb_srcptr vec1, acb_srcptr vec2, long len, long prec)
+
+.. function:: void _acb_vec_sub(acb_ptr res, acb_srcptr vec1, acb_srcptr vec2, long len, long prec)
+
+.. function:: void _acb_vec_scalar_submul(acb_ptr res, acb_srcptr vec, long len, const acb_t c, long prec)
+
+.. function:: void _acb_vec_scalar_addmul(acb_ptr res, acb_srcptr vec, long len, const acb_t c, long prec)
+
+.. function:: void _acb_vec_scalar_mul(acb_ptr res, acb_srcptr vec, long len, const acb_t c, long prec)
+
+.. function:: void _acb_vec_scalar_mul_ui(acb_ptr res, acb_srcptr vec, long len, ulong c, long prec)
+
+.. function:: void _acb_vec_scalar_mul_2exp_si(acb_ptr res, acb_srcptr vec, long len, long c)
+
+.. function:: void _acb_vec_scalar_mul_onei(acb_ptr res, acb_srcptr vec, long len)
+
+.. function:: void _acb_vec_scalar_div_ui(acb_ptr res, acb_srcptr vec, long len, ulong c, long prec)
+
+.. function:: void _acb_vec_scalar_div(acb_ptr res, acb_srcptr vec, long len, const acb_t c, long prec)
+
+.. function:: void _acb_vec_scalar_mul_arb(acb_ptr res, acb_srcptr vec, long len, const arb_t c, long prec)
+
+.. function:: void _acb_vec_scalar_div_arb(acb_ptr res, acb_srcptr vec, long len, const arb_t c, long prec)
+
+.. function:: void _acb_vec_scalar_mul_fmpz(acb_ptr res, acb_srcptr vec, long len, const fmpz_t c, long prec)
+
+.. function:: void _acb_vec_scalar_div_fmpz(acb_ptr res, acb_srcptr vec, long len, const fmpz_t c, long prec)
+
+   Performs the respective scalar operation elementwise.
+
+.. function:: long _acb_vec_bits(acb_srcptr vec, long len)
+
+    Returns the maximum of :func:`arb_bits` for all entries in *vec*.
+
+.. function:: void _acb_vec_set_powers(acb_ptr xs, const acb_t x, long len, long prec)
+
+    Sets *xs* to the powers `1, x, x^2, \ldots, x^{len-1}`.
+
+.. function:: void _acb_vec_add_error_arf_vec(acb_ptr res, arf_srcptr err, long len)
+
+.. function:: void _acb_vec_add_error_mag_vec(acb_ptr res, mag_srcptr err, long len)
+
+    Adds the magnitude of each entry in *err* to the radius of the
+    corresponding entry in *res*.
+
+.. function:: void _acb_vec_indeterminate(acb_ptr vec, long len)
+
+    Applies :func:`acb_indeterminate` elementwise.
+
+.. function:: void _acb_vec_trim(acb_ptr res, acb_srcptr vec, long len)
+
+    Applies :func:`acb_trim` elementwise.
+
+.. function:: int _acb_vec_get_unique_fmpz_vec(fmpz * res,  acb_srcptr vec, long len)
+
+    Calls :func:`acb_get_unique_fmpz` elementwise and returns nonzero if
+    all entries can be rounded uniquely to integers. If any entry in *vec*
+    cannot be rounded uniquely to an integer, returns zero.
+
+.. function:: void _acb_vec_sort_pretty(acb_ptr vec, long len)
+
+    Sorts the vector of complex numbers based on the real and imaginary parts.
+    This is intended to reveal structure when printing a set of complex numbers,
+    not to apply an order relation in a rigorous way.
 
