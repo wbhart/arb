@@ -61,7 +61,11 @@ int main()
                 mpfr_set_z(tabx, tt, MPFR_RNDD);
                 mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+                mpfr_set_uj(sinx, i, MPFR_RNDD);
+#else
                 mpfr_set_ui(sinx, i, MPFR_RNDD);
+#endif
                 mpfr_div_2ui(sinx, sinx, bits, MPFR_RNDD);
                 if (which)
                     mpfr_cos(sinx, sinx, MPFR_RNDD);
@@ -126,7 +130,11 @@ int main()
                 mpfr_set_z(tabx, tt, MPFR_RNDD);
                 mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+                mpfr_set_uj(sinx, i, MPFR_RNDD);
+#else
                 mpfr_set_ui(sinx, i, MPFR_RNDD);
+#endif
                 mpfr_div_2ui(sinx, sinx, bits, MPFR_RNDD);
                 if (which)
                     mpfr_cos(sinx, sinx, MPFR_RNDD);
@@ -191,7 +199,11 @@ int main()
                 mpfr_set_z(tabx, tt, MPFR_RNDD);
                 mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+                mpfr_set_uj(sinx, i, MPFR_RNDD);
+#else
                 mpfr_set_ui(sinx, i, MPFR_RNDD);
+#endif
                 mpfr_div_2ui(sinx, sinx, bits, MPFR_RNDD);
                 if (which)
                     mpfr_cos(sinx, sinx, MPFR_RNDD);

@@ -54,7 +54,7 @@ int main()
 
         for (i = 0; i < num; i++)
         {
-            mpfr_zeta_ui(s, n + i, MPFR_RNDN);
+            mpfr_zeta_ui(s, (unsigned long) FLINT_MIN(n + i, ULONG_MAX), MPFR_RNDN);
 
             if (!arb_contains_mpfr(r + i, s))
             {

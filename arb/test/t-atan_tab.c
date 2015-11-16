@@ -59,7 +59,11 @@ int main()
             mpfr_set_z(tabx, tt, MPFR_RNDD);
             mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+            mpfr_set_uj(atanx, i, MPFR_RNDD);
+#else
             mpfr_set_ui(atanx, i, MPFR_RNDD);
+#endif
             mpfr_div_2ui(atanx, atanx, bits, MPFR_RNDD);
             mpfr_atan(atanx, atanx, MPFR_RNDD);
 
@@ -110,7 +114,11 @@ int main()
             mpfr_set_z(tabx, tt, MPFR_RNDD);
             mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+            mpfr_set_uj(atanx, i, MPFR_RNDD);
+#else
             mpfr_set_ui(atanx, i, MPFR_RNDD);
+#endif
             mpfr_div_2ui(atanx, atanx, bits, MPFR_RNDD);
             mpfr_atan(atanx, atanx, MPFR_RNDD);
 
@@ -161,7 +169,11 @@ int main()
             mpfr_set_z(tabx, tt, MPFR_RNDD);
             mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+            mpfr_set_uj(atanx, i, MPFR_RNDD);
+#else
             mpfr_set_ui(atanx, i, MPFR_RNDD);
+#endif
             mpfr_div_2ui(atanx, atanx, bits, MPFR_RNDD);
             mpfr_atan(atanx, atanx, MPFR_RNDD);
 

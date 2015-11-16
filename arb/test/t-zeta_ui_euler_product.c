@@ -49,7 +49,7 @@ int main()
         mpfr_init2(s, prec + 100);
 
         arb_zeta_ui_euler_product(r, n, prec);
-        mpfr_zeta_ui(s, n, MPFR_RNDN);
+        mpfr_zeta_ui(s, (unsigned long) FLINT_MIN(n, ULONG_MAX), MPFR_RNDN);
 
         if (!arb_contains_mpfr(r, s))
         {

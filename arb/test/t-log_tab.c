@@ -59,7 +59,11 @@ int main()
             mpfr_set_z(tabx, tt, MPFR_RNDD);
             mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+            mpfr_set_uj(logx, i, MPFR_RNDD);
+#else
             mpfr_set_ui(logx, i, MPFR_RNDD);
+#endif
             mpfr_div_2ui(logx, logx, bits, MPFR_RNDD);
             mpfr_add_ui(logx, logx, 1, MPFR_RNDD);
             mpfr_log(logx, logx, MPFR_RNDD);
@@ -111,7 +115,11 @@ int main()
             mpfr_set_z(tabx, tt, MPFR_RNDD);
             mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+            mpfr_set_uj(logx, i, MPFR_RNDD);
+#else
             mpfr_set_ui(logx, i, MPFR_RNDD);
+#endif
             mpfr_div_2ui(logx, logx, bits, MPFR_RNDD);
             mpfr_add_ui(logx, logx, 1, MPFR_RNDD);
             mpfr_log(logx, logx, MPFR_RNDD);
@@ -163,7 +171,11 @@ int main()
             mpfr_set_z(tabx, tt, MPFR_RNDD);
             mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+            mpfr_set_uj(logx, i, MPFR_RNDD);
+#else
             mpfr_set_ui(logx, i, MPFR_RNDD);
+#endif
             mpfr_div_2ui(logx, logx, bits, MPFR_RNDD);
             mpfr_add_ui(logx, logx, 1, MPFR_RNDD);
             mpfr_log(logx, logx, MPFR_RNDD);
@@ -215,7 +227,11 @@ int main()
             mpfr_set_z(tabx, tt, MPFR_RNDD);
             mpfr_div_2ui(tabx, tabx, prec, MPFR_RNDD);
 
+#if defined(__MINGW64__)
+            mpfr_set_uj(logx, i, MPFR_RNDD);
+#else
             mpfr_set_ui(logx, i, MPFR_RNDD);
+#endif
             mpfr_div_2ui(logx, logx, bits, MPFR_RNDD);
             mpfr_add_ui(logx, logx, 1, MPFR_RNDD);
             mpfr_log(logx, logx, MPFR_RNDD);
