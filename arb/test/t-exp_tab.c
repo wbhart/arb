@@ -36,7 +36,7 @@ int main()
     fflush(stdout);
 
     {
-        slong prec, bits, num;
+        int prec, bits, num;
 
         prec = ARB_EXP_TAB1_LIMBS * FLINT_BITS;
         bits = ARB_EXP_TAB1_BITS;
@@ -91,7 +91,7 @@ int main()
     }
 
     {
-        slong prec, bits, num;
+        int prec, bits, num;
 
         prec = ARB_EXP_TAB2_LIMBS * FLINT_BITS;
         bits = ARB_EXP_TAB21_BITS;
@@ -146,7 +146,7 @@ int main()
     }
 
     {
-        slong prec, bits, num;
+        int prec, bits, num;
 
         prec = ARB_EXP_TAB2_LIMBS * FLINT_BITS;
         bits = ARB_EXP_TAB21_BITS + ARB_EXP_TAB22_BITS;
