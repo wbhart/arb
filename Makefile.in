@@ -61,7 +61,7 @@ verbose:
 clean:
 	$(AT)$(foreach dir, $(BUILD_DIRS), BUILD_DIR=../build/$(dir); export BUILD_DIR; MOD_DIR=$(dir); export MOD_DIR; $(MAKE) -f ../Makefile.subdirs -C $(dir) clean || exit $$?;)
 	$(AT)$(foreach ext, $(EXTENSIONS), $(foreach dir, $(patsubst $(ext)/%.h, %, $(wildcard $(ext)/*.h)), BUILD_DIR=$(CURDIR)/build/$(dir); export BUILD_DIR; MOD_DIR=$(dir); export MOD_DIR; $(MAKE) -f $(CURDIR)/Makefile.subdirs -C $(ext)/$(dir) clean || exit $$?;))
-	rm -f $(OBJS) $(LOBJS) $(TESTS) $(PROFS) $(EXMPS) $(wildcard $(ARB_LIBNAME)*) libarb.a
+	rm -f $(OBJS) $(LOBJS) $(TESTS) $(PROFS) $(EXMPS) $(wildcard $(ARB_LIBNAME)*) $(wildcard $(ARB_LIB)*) libarb.a
 	rm -rf build
 
 distclean: clean
